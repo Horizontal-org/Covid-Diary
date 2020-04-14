@@ -1,4 +1,6 @@
+import 'reflect-metadata';
 import 'react-native-gesture-handler';
+
 import React, { useEffect, useState } from 'react';
 import { Updates } from 'expo';
 import { I18nManager as RNI18nManager, ActivityIndicator } from 'react-native';
@@ -8,9 +10,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import i18n from './src/services/i18n';
 import { HomeScreen } from './src/screen/homeScreen';
+import { WelcomeScreen } from './src/screen/welcomeScreen';
 
 const Stack = createStackNavigator();
-
 export default function App() {
 
   const [ isI18nInitialized, setI18nInitialized ] = useState(false);
@@ -37,9 +39,10 @@ export default function App() {
     )
     : (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={'Home'}>
-          <Stack.Screen name={'Home'} component={HomeScreen} options={{ title: i18n.t('home')}} />
-        </Stack.Navigator>
+        <Stack.Navigator initialRouteName={'WelcomeSreen'}>
+          <Stack.Screen name={'WelcomeSreen'} component={WelcomeScreen} options={{headerShown: false}} />
+          <Stack.Screen name={'Home'} component={HomeScreen} options={{headerTitle: i18n.t('home')}} />
+       </Stack.Navigator>
       </NavigationContainer>
     );
 }
