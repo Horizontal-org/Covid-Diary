@@ -1,5 +1,9 @@
 {
     "common" : {
-        "home": "Inicio"
+        "home": "Inicio",
+        "welcome": "Bienvenido",
+        "welcome-text": "Registra tus síntomas de COVID-19 y monitora tu condición médica para ayudar al personal médico con información precisa",
+        "next": "Siguiente",
+        "ok": "Aceptar"
     }
 }

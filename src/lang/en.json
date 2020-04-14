@@ -1,5 +1,9 @@
 {
     "common" : {
-        "home": "Home"
+        "home": "Home",
+        "welcome": "Welcome",
+        "welcome-text": "Record your COVID-19 symptoms to track your condition and help medical personnel with accurate information",
+        "next": "Next",
+        "ok": "OK"
     }
 }
