@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="23px" height="23px" viewBox="0 0 23 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>Icons / UI / Add</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Icons-/-UI-/-Add" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Edit">
+            <polygon id="Path" points="0 0 23 0 23 23 0 23"></polygon>
+        </g>
+        <circle id="Oval" stroke="#457B9D" cx="11.5" cy="11.5" r="8"></circle>
+        <line x1="7" y1="11.5" x2="16" y2="11.5" id="Line" stroke="#457B9D" stroke-linecap="square" transform="translate(11.500000, 11.500000) rotate(90.000000) translate(-11.500000, -11.500000) "></line>
+        <line x1="7" y1="11.5" x2="16" y2="11.5" id="Line" stroke="#457B9D" stroke-linecap="square"></line>
+    </g>
+</svg>

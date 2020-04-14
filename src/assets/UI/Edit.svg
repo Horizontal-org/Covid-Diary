@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="23px" height="23px" viewBox="0 0 23 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>Icons / UI / Edit</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Icons-/-UI-/-Edit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Edit">
+            <polygon id="Path" points="0 0 23 0 23 23 0 23"></polygon>
+            <path d="M3,16.657131 L3,19.5278434 C3,19.7922511 3.20774892,20 3.47215664,20 L6.34286905,20 C6.46562977,20 6.5883905,19.9527843 6.6733787,19.858353 L16.9852798,9.55589501 L13.444105,6.01472018 L3.14164699,16.3171782 C3.04721566,16.4116095 3,16.5249271 3,16.657131 Z M19.7237884,6.81738647 C20.0920705,6.44910429 20.0920705,5.85418692 19.7237884,5.48590474 L17.5140953,3.27621164 C17.1458131,2.90792945 16.5508957,2.90792945 16.1826135,3.27621164 L14.4545202,5.00430496 L17.995695,8.54547979 L19.7237884,6.81738647 Z" id="Shape" fill="#457B9D" fill-rule="nonzero"></path>
+        </g>
+    </g>
+</svg>

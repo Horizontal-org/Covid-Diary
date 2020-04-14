@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="23px" height="23px" viewBox="0 0 23 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>Icons / UI / Table</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Icons-/-UI-/-Table" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Table">
+            <polygon id="Path" points="0 0 23 0 23 23 0 23"></polygon>
+            <path d="M9.58333333,9.6025 L14.375,9.6025 L14.375,20.125 L9.58333333,20.125 L9.58333333,9.6025 Z M16.2916667,20.125 L19.1666667,20.125 C20.2208333,20.125 21.0833333,19.2625 21.0833333,18.2083333 L21.0833333,9.58333333 L16.2916667,9.58333333 L16.2916667,20.125 Z M19.1666667,2.875 L4.79166667,2.875 C3.7375,2.875 2.875,3.7375 2.875,4.79166667 L2.875,7.66666667 L21.0833333,7.66666667 L21.0833333,4.79166667 C21.0833333,3.7375 20.2208333,2.875 19.1666667,2.875 Z M2.875,18.2083333 C2.875,19.2625 3.7375,20.125 4.79166667,20.125 L7.66666667,20.125 L7.66666667,9.58333333 L2.875,9.58333333 L2.875,18.2083333 Z" id="Shape" fill="#457B9D" fill-rule="nonzero"></path>
+        </g>
+    </g>
+</svg>
