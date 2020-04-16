@@ -5,14 +5,27 @@ import React, { useEffect, useState } from 'react';
 import { Updates } from 'expo';
 import { I18nManager as RNI18nManager, ActivityIndicator } from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer, RouteProp } from '@react-navigation/native';
+import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
 
 import i18n from './src/services/i18n';
 import { HomeScreen } from './src/screen/homeScreen';
 import { WelcomeScreen } from './src/screen/welcomeScreen';
+import { AboutScreen } from './src/screen/aboutScreen';
+import { ResourcesScreen } from './src/screen/resourcesScreen';
+import { AddProfileScreen } from './src/screen/addProfileScreen';
+import { ProfileScreen } from './src/screen/profileScreen';
+import { RootStackParamList } from './src/services/navigation/routeTypes';
 
-const Stack = createStackNavigator();
+const headerCustomStyle = (title: string): StackNavigationOptions => ({
+  title: i18n.t(title),
+  headerShown: true,
+  headerTitleAlign:'center',
+  headerTintColor: 'rgba(29, 53, 87,0.76)',
+  headerTransparent: true
+});
+
+const Stack = createStackNavigator<RootStackParamList>();
 export default function App() {
 
   const [ isI18nInitialized, setI18nInitialized ] = useState(false);
@@ -39,9 +52,12 @@ export default function App() {
     )
     : (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={'WelcomeSreen'}>
-          <Stack.Screen name={'WelcomeSreen'} component={WelcomeScreen} options={{headerShown: false}} />
-          <Stack.Screen name={'Home'} component={HomeScreen} options={{headerTitle: i18n.t('home')}} />
+        <Stack.Navigator initialRouteName={'Welcome'}>
+          <Stack.Screen name={'Welcome'} component={WelcomeScreen} options={{headerShown: false}} />
+          <Stack.Screen name={'Home'} component={HomeScreen} options={{headerShown: false }} />
+          <Stack.Screen name={'About'} component={AboutScreen} options={{headerShown: false }} />
+          <Stack.Screen name={'Resources'} component={ResourcesScreen} options={{headerShown: false }} />
+          <Stack.Screen name={'ProfileAdd'} component={AddProfileScreen} options={headerCustomStyle(i18n.t('new-profile').toUpperCase())} />
        </Stack.Navigator>
       </NavigationContainer>
     );
