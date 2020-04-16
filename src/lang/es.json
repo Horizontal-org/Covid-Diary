@@ -1,9 +1,16 @@
 {
     "common" : {
-        "home": "Inicio",
+        "create-user": "Crear un perfil",
+        "new-profile": "Perfil nuevo",
         "welcome": "Bienvenido",
         "welcome-text": "Registra tus síntomas de COVID-19 y monitora tu condición médica para ayudar al personal médico con información precisa",
         "next": "Siguiente",
-        "ok": "Aceptar"
+        "ok": "Aceptar",
+        "add-user": "Agregar nuevo perfil",
+        "resources": "Recursos",
+        "about": "Acerca de",
+        "name": "Nombre",
+        "name-error": "Ingrese un nombre",
+        "record-my-temp": "Registrar la temperatura en:"
     }
 }

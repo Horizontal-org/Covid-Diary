@@ -1,9 +1,16 @@
 {
     "common" : {
-        "home": "Home",
+        "create-user": "Create a Profile",
+        "new-profile": "New Profile",
         "welcome": "Welcome",
         "welcome-text": "Record your COVID-19 symptoms to track your condition and help medical personnel with accurate information",
         "next": "Next",
-        "ok": "OK"
+        "ok": "OK",
+        "add-user": "Add new profile",
+        "resources": "Resources",
+        "about": "About",
+        "name": "Name",
+        "name-error": "Please enter a name",
+        "record-my-temp": "Record my body temperature in:"
     }
 }
