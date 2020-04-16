@@ -11,6 +11,7 @@ declare module 'react-native-button' {
         styleDisabled?: object;
         childGroupStyle?: object;
         onPress: ()=>void;
+        onLongPress?: () => void;
     }
 
     class Button<P = {}, S = {}> extends Component<ButtonProps, S> {
