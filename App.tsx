@@ -58,6 +58,7 @@ export default function App() {
           <Stack.Screen name={'About'} component={AboutScreen} options={{headerShown: false }} />
           <Stack.Screen name={'Resources'} component={ResourcesScreen} options={{headerShown: false }} />
           <Stack.Screen name={'ProfileAdd'} component={AddProfileScreen} options={headerCustomStyle(i18n.t('new-profile').toUpperCase())} />
+          <Stack.Screen name={'Profile'} component={ProfileScreen} options={({route}) => headerCustomStyle(route.params.user.name)} />
        </Stack.Navigator>
       </NavigationContainer>
     );
