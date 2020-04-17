@@ -1,11 +1,13 @@
-import { User } from '../../entities';
+import { User, Symptom,  } from '../../entities';
 import { createConnection } from 'typeorm/browser';
+import * as SQLite from 'expo-sqlite';
 
 export const db = createConnection({
     database: "covid",
-    driver: require('expo-sqlite'),
+    driver: SQLite,
     entities: [
-        User
+        User,
+        Symptom
     ],
     synchronize: true,
     type: "expo",
