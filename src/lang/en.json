@@ -11,6 +11,23 @@
         "about": "About",
         "name": "Name",
         "name-error": "Please enter a name",
-        "record-my-temp": "Record my body temperature in:"
+        "record-my-temp": "Record my body temperature in:",
+        "cough" : "Cough",
+        "soreThroat" : "Sore Throat",
+        "temperatureMorning" : "Body Temp (Morning)",
+        "temperatureEvening" : "Body Temp (Evening)",
+        "shortnessOfBreath" : "Shortness of Breath",
+        "runnyNose" : "Runny nose",
+        "lossOfSmell" : "Loss of smell/taste",
+        "headache" : "Headache",
+        "abdominalPain" : "Abdominal pain",
+        "vomiting" : "Vomiting",
+        "bodyAches" : "Body Aches",
+        "diarrhea" : "Diarrhea",
+        "extreme": "extreme",
+        "severe": "severe",
+        "mild": "mild",
+        "today": "Today",
+        "enter-symptoms": "Enter Symptoms"
     }
 }

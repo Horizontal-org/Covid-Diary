@@ -11,6 +11,23 @@
         "about": "Acerca de",
         "name": "Nombre",
         "name-error": "Ingrese un nombre",
-        "record-my-temp": "Registrar la temperatura en:"
+        "record-my-temp": "Registrar la temperatura en:",
+        "cough" : "Tos",
+        "soreThroat" : "Dolor de garganta",
+        "temperatureMorning" : "Temp. corporal (Mañana)",
+        "temperatureEvening" : "Temp. corporal (Noche)",
+        "shortnessOfBreath" : "Falta de aliento",
+        "runnyNose" : "Nariz que gotea",
+        "lossOfSmell" : "Pérdida del olfato/gusto",
+        "headache" : "Dolor de cabeza",
+        "abdominalPain" : "Dolor abdominal",
+        "vomiting" : "Vómitos",
+        "bodyAches" : "Dolores corporales",
+        "diarrhea" : "Diarrea",
+        "extreme": "extremo",
+        "severe": "severo",
+        "mild": "suave",
+        "today": "Hoy",
+        "enter-symptoms": "Ingresar Síntomas"
     }
 }
