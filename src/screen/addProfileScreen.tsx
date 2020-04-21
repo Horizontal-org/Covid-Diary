@@ -18,8 +18,8 @@ export const AddProfileScreen = ({ navigation }: Props) => {
   const [name, onChangeText] = useState('');
   const [error, setError] = useState(false);
 
-  const [isCelsius, setIsCelsius] = useState(false);
-  const toggleSwitch = () => setIsCelsius(previousState => !previousState);
+  const [isFarenheit, setIsFarenheit] = useState(false);
+  const toggleSwitch = () => setIsFarenheit(!isFarenheit);
 
   const submit = async () => {
     if(name === '') {
@@ -30,7 +30,7 @@ export const AddProfileScreen = ({ navigation }: Props) => {
     const users = await connection.getRepository(User);
     const user = new User();
     user.name = name;
-    user.celsius = isCelsius;
+    user.celsius = !isFarenheit;
     await users.save(user);
     navigation.replace('Home');
   }
@@ -59,16 +59,16 @@ export const AddProfileScreen = ({ navigation }: Props) => {
           {i18n.t('record-my-temp')}
         </Text>
         <View style={{ display: "flex", flexDirection: 'row', justifyContent: 'center', alignContent: 'center'}}>
-          <Text style={{fontSize: 48, opacity: 0.66, color: isCelsius? '#B4B4B4' : '#050505' }}>C°</Text>
+          <Text style={{fontSize: 48, opacity: 0.66, color: isFarenheit? '#B4B4B4' : '#050505' }}>C°</Text>
           <Switch
             trackColor={{ false: "#70C1B3", true: "#70C1B3" }}
             thumbColor={"#fff"}
             ios_backgroundColor="#70C1B3"
             onValueChange={toggleSwitch}
-            value={isCelsius}
+            value={isFarenheit}
             style={{marginLeft: 10, marginRight: 10}}
           />
-          <Text style={{fontSize: 48, opacity: 0.66, color: !isCelsius? '#B4B4B4' : '#050505' }}>F°</Text>
+          <Text style={{fontSize: 48, opacity: 0.66, color: !isFarenheit? '#B4B4B4' : '#050505' }}>F°</Text>
         </View>
       </View>
       <View style={styles.footer}>

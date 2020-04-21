@@ -15,8 +15,9 @@ import { symptomsTypes, Symptom } from "../entities";
 
 import moment from "moment";
 
-import { formatSymptoms, DayRecord, SymptomsList } from '../utils/formatSymptoms';
+import { formatSymptoms, DayRecord, SymptomsList, removeNull } from '../utils/formatSymptoms';
 import { isToday } from '../utils/isToday';
+import { CToFar } from '../utils/temperature';
 
 const hasSymptoms = (dayRecord: DayRecord) => dayRecord.symptoms ? true : false;
 
@@ -45,20 +46,28 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 	const [symptoms, setSymptoms] = useState<DayRecord[]>([]);
 
 	const loadUserSymptoms = async () => {
+		console.log('loading user symptom')
 		const connection = await db;
 		const userSymptoms = await connection.getRepository(Symptom).find({
 			relations: ["user"],
 			where: { user: route.params.user },
 		});
-		setSymptoms(formatSymptoms(userSymptoms));
+		setSymptoms(
+			formatSymptoms(
+				userSymptoms.filter(removeNull)
+			)
+		);
 	};
 
-	const goToWizard = () => {
-		navigation.navigate("Wizard", { user: route.params.user });
+	const goToWizard = (record?: DayRecord) => {
+		if (!record || !record.date) {
+			navigation.navigate("Wizard", { user: route.params.user });
+		} else {
+			navigation.navigate("Wizard", { user: route.params.user, date: record.date.toString()});
+		}
 	};
 
 	useEffect(() => {
-		loadUserSymptoms();
 		navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity style={{ marginRight: 10 }}>
@@ -66,6 +75,10 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 				</TouchableOpacity>
 			),
 		});
+		navigation.addListener('focus', loadUserSymptoms);
+		return () => {
+			navigation.removeListener('focus', loadUserSymptoms)
+		}
 	}, []);
 
 	return (
@@ -74,9 +87,10 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 				<ScrollView style={{ paddingHorizontal: 30 }}>
 					{symptoms.map((record) => (
 						<DailyRecord
+							celsius={route.params.user.celsius}
 							key={"record" + record.id}
 							record={record}
-							onEdit={console.log}
+							onEdit={goToWizard}
 						/>
 					))}
 				</ScrollView>
@@ -101,9 +115,10 @@ const styles = StyleSheet.create({
 type DailyRecordProps = {
 	record: DayRecord;
 	onEdit: (r: DayRecord) => void;
+	celsius: boolean;
 };
 
-const DailyRecord = ({ record, onEdit }: DailyRecordProps) => {
+const DailyRecord = ({ celsius, record, onEdit }: DailyRecordProps) => {
 	const { date, symptoms } = record;
 	return (
 		<View
@@ -131,7 +146,7 @@ const DailyRecord = ({ record, onEdit }: DailyRecordProps) => {
 							: dayRecordStyle.symptomsBoxEmpyt
 					}
 				>
-					{symptoms ? <SymptomsBox symptoms={symptoms} /> : false}
+					{symptoms ? <SymptomsBox symptoms={symptoms} celsius={celsius} /> : false}
 				</View>
 			</View>
 		</View>
@@ -140,16 +155,33 @@ const DailyRecord = ({ record, onEdit }: DailyRecordProps) => {
 
 type SymptomsBoxProps = {
 	symptoms: SymptomsList;
+	celsius: boolean
 };
-const SymptomsBox = ({ symptoms }: SymptomsBoxProps) => {
+const SymptomsBox = ({ symptoms, celsius }: SymptomsBoxProps) => {
 	const keys = Object.keys(symptoms) as symptomsTypes[];
+
+	const tempToPain = (temp: number) => {
+		if (temp < 370) return '1';
+		if (temp < 375) return '2';
+		if (temp < 385) return '3';
+		return '4';
+	}
+
+	const formatTemp = (temp: number) => {
+		if (celsius) return temp/10 + ' °C';
+		return CToFar(temp) + ' °F';
+	}
+
 	return (
 		<View>
 			{keys.length === 0 ? (
 				<Text style={{ textAlign: "center" }}>No symptoms</Text>
 			) : (
-					keys.map((symptom) => {
-						const pain = symptoms[symptom]?.toString() as painCalification;
+					keys
+						.map((symptom) => {
+						const isTemperature = symptom.includes('temperature')
+						if(isTemperature && Number(symptoms[symptom]) < 370) return false;
+						const pain = isTemperature ? tempToPain(Number(symptoms[symptom])) : symptoms[symptom]?.toString() as painCalification;
 						return (
 							<View
 								key={symptom}
@@ -159,9 +191,9 @@ const SymptomsBox = ({ symptoms }: SymptomsBoxProps) => {
 									style={[dayRecordStyle.symptomsListCircle, { backgroundColor: typeColor[pain] }]}
 								/>
 								<View style={{ flexDirection: "row" }}>
-									<Text>{i18n.t(symptom)} </Text>
+									<Text>{i18n.t(isTemperature ? symptom+'Short' : symptom)} </Text>
 									<Text style={{ fontStyle: "italic" }}>
-										({i18n.t(typeLabel[pain])})
+										({ isTemperature ? formatTemp(Number(symptoms[symptom])) : i18n.t(typeLabel[pain])})
                 					</Text>
 								</View>
 							</View>
