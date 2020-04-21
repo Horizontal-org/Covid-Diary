@@ -16,6 +16,7 @@ import { ResourcesScreen } from './src/screen/resourcesScreen';
 import { AddProfileScreen } from './src/screen/addProfileScreen';
 import { ProfileScreen } from './src/screen/profileScreen';
 import { RootStackParamList } from './src/services/navigation/routeTypes';
+import { WizardScreen } from './src/screen/wizardScreen';
 
 const headerCustomStyle = (title: string): StackNavigationOptions => ({
   title: i18n.t(title),
@@ -59,6 +60,7 @@ export default function App() {
           <Stack.Screen name={'Resources'} component={ResourcesScreen} options={{headerShown: false }} />
           <Stack.Screen name={'ProfileAdd'} component={AddProfileScreen} options={headerCustomStyle(i18n.t('new-profile').toUpperCase())} />
           <Stack.Screen name={'Profile'} component={ProfileScreen} options={({route}) => headerCustomStyle(route.params.user.name)} />
+          <Stack.Screen name={'Wizard'} component={WizardScreen} options={headerCustomStyle(i18n.t('today').toUpperCase())} />
        </Stack.Navigator>
       </NavigationContainer>
     );
