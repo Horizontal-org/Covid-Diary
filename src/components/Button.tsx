@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { StyleSheet, TouchableOpacityProps, StyleProp, ViewStyle, TextStyle } from 'react-native';
+import { StyleSheet, TouchableOpacityProps, StyleProp, ViewStyle, TextStyle, View } from 'react-native';
 import Button from 'react-native-button';
 
 
@@ -11,20 +11,26 @@ interface CustomButtonProps extends TouchableOpacityProps {
     onLongPress?: () => void;
     style?: StyleProp<TextStyle>;
     containerStyle?: StyleProp<ViewStyle>;
+    hide?: boolean;
 
 }
 
 export const CustomButton =  (props: CustomButtonProps) => {
-    return (
-        <Button
-            containerStyle={[styles.buttonContainer, props.containerStyle ? props.containerStyle : {}]}
-            style={[styles.buttonText, props.style? props.style : {}]}
-            onPress={props.onPress}
-            onLongPress={props.onLongPress}
-        >
-            {props.text}
-        </Button>
-    );
+    const containerStyle = [styles.buttonContainer, props.containerStyle ? props.containerStyle : {}]
+    return !props.hide
+        ? (
+            <Button
+                containerStyle={containerStyle}
+                style={[styles.buttonText, props.style? props.style : {}]}
+                onPress={props.onPress}
+                onLongPress={props.onLongPress}
+            >
+                {props.text}
+            </Button>
+        )
+        : (
+            <View style={containerStyle}></View>
+        );
 };
 
 const styles = StyleSheet.create({
