@@ -1,9 +1,7 @@
 
 
 import React from 'react';
-import { StyleSheet, TouchableOpacityProps, StyleProp, ViewStyle, TextStyle, View } from 'react-native';
-import Button from 'react-native-button';
-
+import { StyleSheet, TouchableOpacity, TouchableOpacityProps, StyleProp, ViewStyle, TextStyle, View, Text } from 'react-native';
 
 interface CustomButtonProps extends TouchableOpacityProps {
     text: string;
@@ -19,14 +17,15 @@ export const CustomButton =  (props: CustomButtonProps) => {
     const containerStyle = [styles.buttonContainer, props.containerStyle ? props.containerStyle : {}]
     return !props.hide
         ? (
-            <Button
-                containerStyle={containerStyle}
-                style={[styles.buttonText, props.style? props.style : {}]}
-                onPress={props.onPress}
-                onLongPress={props.onLongPress}
-            >
-                {props.text}
-            </Button>
+            <View style={containerStyle}>
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={props.onPress}
+                    onLongPress={props.onLongPress}
+                >
+                    <Text  style={[styles.buttonText, props.style? props.style : {}]}>{props.text}</Text>
+                </TouchableOpacity>
+            </View>
         )
         : (
             <View style={containerStyle}></View>
@@ -38,6 +37,7 @@ const styles = StyleSheet.create({
 
     },
     buttonText: {
+        textAlign: 'center',
         backgroundColor: 'rgb(78, 200, 180)',
         borderRadius: 50,
         padding: 15,
