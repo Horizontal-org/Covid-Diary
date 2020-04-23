@@ -4,7 +4,7 @@ import i18n from '../services/i18n';
 import { CustomButton } from '../components/Button';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../services/navigation/routeTypes';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { RouteProp } from '@react-navigation/native';
 import { isToday } from '../utils/isToday';
 import { DayRecord, SymptomsList, mergeSymptoms } from '../utils/formatSymptoms';
@@ -12,6 +12,7 @@ import { symptomsTypes, Symptom } from '../entities';
 import { getConnection } from 'typeorm/browser';
 import { fToCel } from '../utils/temperature';
 import { TempScroll } from '../components/TemperatureScroll'; 
+import { ScheduleScreen } from '../components/Schedule';
 
 type WizardNavigationProps = StackNavigationProp<RootStackParamList, 'Wizard'>;
 type WizardScreenRouteProp = RouteProp<RootStackParamList, 'Wizard'>;
@@ -47,37 +48,42 @@ export const WizardScreen = ({ navigation, route }: Props) => {
   const [ record, setRecord ] = useState<DayRecord | undefined>();
   const [ screen, setScreen ] = useState<number>(0);
   const [ oldRercords, setOldRecords ] = useState<Symptom[]>([]);
-  const [ saved, setSaved] = useState<boolean | undefined>();
+  const [ ready, setReady] = useState<boolean | undefined>();
+  const [ isLoading, setLoading ] = useState(true);
+
+  const setTitle = (date: Moment) => {
+    navigation.setOptions({ 
+      title: isToday(date.toDate()) ? i18n.t('today') : date.format('dddd')
+    });
+  }
 
   useEffect(() => {
-    const initDate = record
-        ? moment(record.date)
-        : moment(route.params.date).add()
-            ? moment(route.params.date)
-            : moment().startOf();
-
-    navigation.setOptions({ 
-        title: isToday(initDate.toDate()) ? i18n.t('today') : initDate.format('dddd')
-    });
-    
-    loadSymptoms(initDate.toDate());
+    if ( route.params.date ) {
+      const date = moment(route.params.date)
+      loadSymptoms(date);
+      return;
+    }
+    setLoading(false)
   }, []);
 
-  const loadSymptoms = async (date: Date) => {
+  const loadSymptoms = async (date: Moment) => {
+    setTitle(date)
+    setLoading(true);
     const symptoms = await getConnection()
       .getRepository(Symptom)
       .find({ 
         relations: ['user'],
         where: {
         user: route.params.user,
-        date: moment(date).format('YYYY-MM-DD')
+        date: date.format('YYYY-MM-DD')
       }})
     setOldRecords(symptoms)
     setRecord({
-      date,
+      date: date.toDate(),
       symptoms: {},
       ...(symptoms.length > 0 ? symptoms.reduce(mergeSymptoms, [])[0] : {})
     })
+    setLoading(false);
   }
 
   const formatTemperature = (temp:number) => {
@@ -95,6 +101,7 @@ export const WizardScreen = ({ navigation, route }: Props) => {
       });
     }
   }
+
   const setSymptom = (symptom: SymptomsList) => {
     if (symptom.temperatureEvening) { symptom.temperatureEvening = formatTemperature(symptom.temperatureEvening) }
     if (symptom.temperatureMorning) { symptom.temperatureMorning = formatTemperature(symptom.temperatureMorning) }
@@ -119,14 +126,14 @@ export const WizardScreen = ({ navigation, route }: Props) => {
   const nextScreen = async () => {
     if (screen + 1 === symptomsList.length) {
       navigation.setOptions({ headerShown: false }); 
-      setSaved(true);
+      setReady(true);
     }
     setScreen(screen + 1)
     return;
   }  
 
   const save = async () => {
-    setSaved(false)
+    setLoading(true)
     if ( !record || !record.symptoms ) return;
     const conn = await getConnection()
     const symptoms = record.symptoms || {};
@@ -148,7 +155,7 @@ export const WizardScreen = ({ navigation, route }: Props) => {
         return conn.getRepository(Symptom).insert(sym)
       })
     );
-    navigation.pop(1)
+    navigation.pop(1);
   }
 
   const isUnselected = (symptBtn: {type: string, value: number}) => {
@@ -166,80 +173,83 @@ export const WizardScreen = ({ navigation, route }: Props) => {
     return record.symptoms[acutalSymptom]
   }
 
-  return typeof saved === 'undefined' ? (
-    <View style={styles.container}>      
-        <View style={styles.options}>
-          <Text style={styles.text}>{i18n.t(symptomsList[screen])}</Text>
-          { 
-            !symptomsList[screen].includes('temperature')
-              ? symptomsValues.map(symptBtn => (
-                  <CustomButton key={symptBtn.value} containerStyle={[styles.button]}  style={[btnStyles[symptBtn.type], isUnselected(symptBtn) ? btnStyles.unselected : {}]} text={i18n.t(symptBtn.type)} onPress={()=> {
-                    setSymptom({ [symptomsList[screen]]: symptBtn.value })
-                  }} />
-                )
-              )
-              : (<>
-                    <View style={{height: 235, display: "flex", flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                      <TempScroll 
-                        key={symptomsList[screen]}
-                        onChange={(temp) => setSymptom({ [symptomsList[screen]]: temp })}
-                        defaultValue={getActualTemp()}
-                        isFarenheit={!route.params.user.celsius}
-                      />
-                    </View>
-                    <CustomButton style={{backgroundColor: 'transparent', color: 'rgb(112, 193, 179)'}} onPress={()=>{
-                      deleteSymptom(symptomsList[screen]);
-                      nextScreen()
-                    }} text={i18n.t('skip')} />
-                  </>
-              )
-          }
-        </View>
-        <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          width: "100%",
-          justifyContent: "space-evenly",
-        }}
-      >
-        <CustomButton
-          style={styles.buttonTabText}
-          containerStyle={styles.buttonTab}
-          onPress={() => setScreen( screen - 1)}
-          text={i18n.t("previous")}
-          hide={screen === 0 }
-        />
-        <Text style={{color: 'rgb(150,150,150)', padding: 15}}>
-          {(screen+1)+ '/' +symptomsList.length}
-        </Text>
-        <CustomButton
-          style={styles.buttonTabText}
-          containerStyle={styles.buttonTab}
-          onPress={nextScreen}
-          text={i18n.t("next")}
-        />
-      </View>
-    </View>
-  )
-  : saved 
-    ? (
-      <View style={styles.container}>
-        <View style={{flex: 1, justifyContent: 'center', marginTop: 30 }}>
-          <Image
-            source={require("../assets/save-image.png")}
-            style={{ width: 250, height: 250, maxWidth: "100%" }}
+  return !isLoading 
+    ? !ready 
+      ? record 
+        ? (
+          <View style={styles.container}>      
+              <View style={styles.options}>
+                <Text style={styles.text}>{i18n.t(symptomsList[screen])}</Text>
+                { 
+                  !symptomsList[screen].includes('temperature')
+                    ? symptomsValues.map(symptBtn => (
+                        <CustomButton key={symptBtn.value} containerStyle={[styles.button]}  style={[btnStyles[symptBtn.type], isUnselected(symptBtn) ? btnStyles.unselected : {}]} text={i18n.t(symptBtn.type)} onPress={()=> {
+                          setSymptom({ [symptomsList[screen]]: symptBtn.value })
+                        }} />
+                      )
+                    )
+                    : (<>
+                          <View style={{height: 235, display: "flex", flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                            <TempScroll 
+                              key={symptomsList[screen]}
+                              onChange={(temp) => setSymptom({ [symptomsList[screen]]: temp })}
+                              defaultValue={getActualTemp()}
+                              isFarenheit={!route.params.user.celsius}
+                            />
+                          </View>
+                          <CustomButton style={{backgroundColor: 'transparent', color: 'rgb(112, 193, 179)'}} onPress={()=>{
+                            deleteSymptom(symptomsList[screen]);
+                            nextScreen()
+                          }} text={i18n.t('skip')} />
+                        </>
+                    )
+                }
+              </View>
+              <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <CustomButton
+                style={styles.buttonTabText}
+                containerStyle={styles.buttonTab}
+                onPress={() => setScreen( screen - 1)}
+                text={i18n.t("previous")}
+                hide={screen === 0 }
+              />
+              <Text style={{color: 'rgb(150,150,150)', padding: 15}}>
+                {(screen+1)+ '/' +symptomsList.length}
+              </Text>
+              <CustomButton
+                style={styles.buttonTabText}
+                containerStyle={styles.buttonTab}
+                onPress={nextScreen}
+                text={i18n.t("next")}
+              />
+            </View>
+          </View>
+        )
+        : <ScheduleScreen user={route.params.user} onChange={setTitle} onSubmit={loadSymptoms} />
+      : (
+        <View style={styles.container}>
+          <View style={{flex: 1, justifyContent: 'center', marginTop: 30 }}>
+            <Image
+              source={require("../assets/save-image.png")}
+              style={{ width: 250, height: 250, maxWidth: "100%" }}
+            />
+            <Text style={saveStyle.title}>{i18n.t('saveThatsAll')}</Text>
+            <Text style={saveStyle.subTitle}>{i18n.t('saveMessage')}</Text>  
+          </View>
+          <CustomButton
+            containerStyle={{width: '100%', padding: 20}}
+            onPress={save}
+            text={i18n.t('saveSymptoms')}
           />
-          <Text style={saveStyle.title}>{i18n.t('saveThatsAll')}</Text>
-          <Text style={saveStyle.subTitle}>{i18n.t('saveMessage')}</Text>  
         </View>
-        <CustomButton
-          containerStyle={{width: '100%', padding: 20}}
-          onPress={save}
-          text={i18n.t('saveSymptoms')}
-        />
-      </View>
-    )
+      )
     : (
       <View style={styles.container}>
         <ActivityIndicator />

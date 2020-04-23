@@ -7,5 +7,5 @@ export type RootStackParamList = {
     Resources: undefined;
     ProfileAdd: undefined;
     Profile: { user: User };
-    Wizard: { user: User, date?: string }
+    Wizard: { user: User, date?: string, edit?: boolean }
 };

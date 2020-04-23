@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useCallback, useRef, createRef } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../services/navigation/routeTypes";
 import { RouteProp } from "@react-navigation/native";
 
-import { Text, View, StyleSheet } from "react-native";
-import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
+import { Text, View, StyleSheet, ScrollView, FlatList } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { CustomButton } from "../components/Button";
 import CalendarIcon from "../assets/UI/Table.svg";
 import EditIcon from "../assets/UI/Edit.svg";
@@ -44,7 +44,7 @@ type Props = {
 
 export const ProfileScreen = ({ navigation, route }: Props) => {
 	const [symptoms, setSymptoms] = useState<DayRecord[]>([]);
-
+	
 	const loadUserSymptoms = async () => {
 		console.log('loading user symptom')
 		const connection = await db;
@@ -68,13 +68,13 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 	};
 
 	useEffect(() => {
-		navigation.setOptions({
+		/* navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity style={{ marginRight: 10 }}>
 					<CalendarIcon width={30} height={30} />
 				</TouchableOpacity>
 			),
-		});
+		}); */
 		navigation.addListener('focus', loadUserSymptoms);
 		return () => {
 			navigation.removeListener('focus', loadUserSymptoms)
@@ -84,16 +84,15 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 	return (
 		<View style={{ width: "100%", flex: 1 }}>
 			<View style={styles.container}>
-				<ScrollView style={{ paddingHorizontal: 30 }}>
-					{symptoms.map((record) => (
-						<DailyRecord
-							celsius={route.params.user.celsius}
-							key={"record" + record.id}
-							record={record}
-							onEdit={goToWizard}
-						/>
-					))}
-				</ScrollView>
+				<FlatList
+					style={{paddingHorizontal: 30}}
+					inverted={true}
+					data={symptoms}
+					renderItem={({item}) => (
+						<DailyRecord record={item} onEdit={goToWizard} celsius={route.params.user.celsius} />
+					)}
+					keyExtractor={item => String(item.id ? item.id : item.date)}
+				/>
 			</View>
 			<CustomButton
 				containerStyle={{ width: "100%", padding: 20 }}
