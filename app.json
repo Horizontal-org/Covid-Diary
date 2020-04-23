@@ -1,20 +1,20 @@
 {
   "expo": {
-    "name": "hzontal-covid",
-    "slug": "hzontal-covid",
+    "name": "Covid Companion",
+    "slug": "covid-companion",
     "platforms": [
       "ios",
       "android"
     ],
     "android": {
-      "package": "org.hzontal.covidmonitor",
+      "package": "org.hzontal.covid",
       "versionCode": 1
     },
     "ios": {
-      "bundleIdentifier": "org.hzontal.covidmonitor",
-      "buildNumber": "1.0.0"
+      "bundleIdentifier": "org.hzontal.covid",
+      "buildNumber": "0.0.1"
     },
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
