@@ -14,8 +14,10 @@
         "record-my-temp": "Registrar la temperatura en:",
         "cough" : "Tos",
         "soreThroat" : "Dolor de garganta",
-        "temperatureMorning" : "Temp. corporal (Mañana)",
-        "temperatureEvening" : "Temp. corporal (Noche)",
+        "temperatureMorningShort" : "Temp. corporal (Mañana)",
+        "temperatureEveningShort" : "Temp. corporal (Noche)",
+        "temperatureMorning" : "Temperatura corporal (Mañana)",
+        "temperatureEvening" : "Temperatura corporal (Noche)",
         "shortnessOfBreath" : "Falta de aliento",
         "runnyNose" : "Nariz que gotea",
         "lossOfSmell" : "Pérdida del olfato/gusto",
@@ -28,6 +30,15 @@
         "severe": "severo",
         "mild": "suave",
         "today": "Hoy",
-        "enter-symptoms": "Ingresar Síntomas"
+        "enter-symptoms": "Ingresar Síntomas",
+        "skip": "Pasar",
+        "saveThatsAll" : "Eso es todo!",
+        "saveMessage": "Recuerde introducir sus síntomas diariamente para tener un mejor seguimiento de su condición.",
+        "saveSymptoms": "Guardar Síntomas",
+        "cancel": "Cancelar",
+        "edit": "Editar",
+        "none": "Ninguno",
+        "previous": "Anterior",
+        "editMessage": "Ya has introducido los síntomas de este día. ¿Quieres editar tu entrada?"
     }
 }
