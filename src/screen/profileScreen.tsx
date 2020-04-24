@@ -1,9 +1,9 @@
-import React, { useEffect, useState,useCallback, useRef, createRef } from "react";
+import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../services/navigation/routeTypes";
 import { RouteProp } from "@react-navigation/native";
 
-import { Text, View, StyleSheet, ScrollView, FlatList } from "react-native";
+import { Text, View, StyleSheet, FlatList } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CustomButton } from "../components/Button";
 import CalendarIcon from "../assets/UI/Table.svg";
@@ -22,18 +22,18 @@ import { CToFar } from '../utils/temperature';
 const hasSymptoms = (dayRecord: DayRecord) => dayRecord.symptoms ? true : false;
 
 const typeColor = {
-	"4": "rgb(215, 38, 61)",
-	"3": "rgb(248, 90, 62)",
-	"2": "rgb(242, 175, 41)",
+	"4": "#9F1725",
+	"3": "#E55934",
+	"2": "#F7CA45",
 };
 
 const typeLabel = {
-	"4": "extreme",
-	"3": "severe",
+	"4": "severe",
+	"3": "moderate",
 	"2": "mild",
 };
 
-type painCalification = "extreme" | "severe" | "mild";
+type painCalification = "severe" | "moderate" | "mild";
 type ProfileScreenNavigationProps = StackNavigationProp<RootStackParamList, "Profile">;
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, "Profile">;
 
@@ -52,6 +52,7 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 			relations: ["user"],
 			where: { user: route.params.user },
 		});
+		
 		setSymptoms(
 			formatSymptoms(
 				userSymptoms.filter(removeNull)
@@ -59,13 +60,20 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 		);
 	};
 
-	const goToWizard = (record?: DayRecord) => {
+	const goToWizard = (record?: DayRecord, temp?: boolean) => {
 		if (!record || !record.date) {
 			navigation.navigate("Wizard", { user: route.params.user });
 		} else {
-			navigation.navigate("Wizard", { user: route.params.user, date: record.date.toString()});
+			if (!temp) {
+				return navigation.navigate("Wizard", { user: route.params.user, date: record.date.toString()});
+			}
+			navigation.navigate("Wizard", { user: route.params.user, date: record.date.toString(), screen: 'temperatureEvening'});
 		}
 	};
+
+	const editUser = () => {
+		navigation.navigate("ProfileAdd", { user: route.params.user })
+	}
 
 	useEffect(() => {
 		/* navigation.setOptions({
@@ -75,6 +83,16 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 				</TouchableOpacity>
 			),
 		}); */
+		navigation.setOptions({
+			headerTitle: () => (
+				<View style={{flexDirection: 'row', alignItems: 'center'}}>
+					<Text style={{lineHeight: 24, fontWeight: '700', color: '#1D3557', opacity: 0.76, fontSize: 18}}>{route.params.user.name}</Text>
+					<TouchableOpacity style={{ marginLeft: 10 }} onPress={editUser}>
+						<EditIcon width={20} height={20} />
+					</TouchableOpacity>
+				</View>
+			)
+		})
 		navigation.addListener('focus', loadUserSymptoms);
 		return () => {
 			navigation.removeListener('focus', loadUserSymptoms)
@@ -89,7 +107,7 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 					inverted={true}
 					data={symptoms}
 					renderItem={({item}) => (
-						<DailyRecord record={item} onEdit={goToWizard} celsius={route.params.user.celsius} />
+						<DailyRecord record={item} tempEdit={ r => goToWizard(r,true)} onEdit={goToWizard} celsius={route.params.user.celsius} />
 					)}
 					keyExtractor={item => String(item.id ? item.id : item.date)}
 				/>
@@ -114,10 +132,11 @@ const styles = StyleSheet.create({
 type DailyRecordProps = {
 	record: DayRecord;
 	onEdit: (r: DayRecord) => void;
+	tempEdit: (r: DayRecord) => void;
 	celsius: boolean;
 };
 
-const DailyRecord = ({ celsius, record, onEdit }: DailyRecordProps) => {
+const DailyRecord = ({ celsius, record, onEdit, tempEdit }: DailyRecordProps) => {
 	const { date, symptoms } = record;
 	return (
 		<View
@@ -133,9 +152,14 @@ const DailyRecord = ({ celsius, record, onEdit }: DailyRecordProps) => {
 						? i18n.t("today")
 						: moment(date).format("dddd, MMMM D YYYY")}
 				</Text>
-				<TouchableOpacity onPress={() => onEdit(record)}>
-					<EditIcon width={20} height={20} />
-				</TouchableOpacity>
+				{ isToday(date) 
+					? (
+						<TouchableOpacity onPress={() => onEdit(record)}>
+							<EditIcon width={20} height={20} />
+						</TouchableOpacity>
+					)
+					: null
+				}
 			</View>
 			<View style={dayRecordStyle.records}>
 				<View
@@ -145,7 +169,7 @@ const DailyRecord = ({ celsius, record, onEdit }: DailyRecordProps) => {
 							: dayRecordStyle.symptomsBoxEmpyt
 					}
 				>
-					{symptoms ? <SymptomsBox symptoms={symptoms} celsius={celsius} /> : false}
+					{symptoms ? <SymptomsBox tempEdit={() => tempEdit(record)} symptoms={symptoms} celsius={celsius} /> : false}
 				</View>
 			</View>
 		</View>
@@ -154,9 +178,10 @@ const DailyRecord = ({ celsius, record, onEdit }: DailyRecordProps) => {
 
 type SymptomsBoxProps = {
 	symptoms: SymptomsList;
-	celsius: boolean
+	celsius: boolean;
+	tempEdit: () => void;
 };
-const SymptomsBox = ({ symptoms, celsius }: SymptomsBoxProps) => {
+const SymptomsBox = ({ symptoms, celsius, tempEdit }: SymptomsBoxProps) => {
 	const keys = Object.keys(symptoms) as symptomsTypes[];
 
 	const tempToPain = (temp: number) => {
@@ -168,7 +193,13 @@ const SymptomsBox = ({ symptoms, celsius }: SymptomsBoxProps) => {
 
 	const formatTemp = (temp: number) => {
 		if (celsius) return temp/10 + ' °C';
-		return CToFar(temp) + ' °F';
+		return (CToFar(temp)/10).toFixed(1) + ' °F';
+	}
+
+	const sortSymptoms = (symptomList: symptomsTypes[]) => {
+		return symptomList
+			.map(symptom => ({type: symptom, value: symptoms[symptom] as number}))
+			.sort((a, b) => b.value - a.value)
 	}
 
 	return (
@@ -176,23 +207,48 @@ const SymptomsBox = ({ symptoms, celsius }: SymptomsBoxProps) => {
 			{keys.length === 0 ? (
 				<Text style={{ textAlign: "center" }}>No symptoms</Text>
 			) : (
-					keys
-						.map((symptom) => {
-						const isTemperature = symptom.includes('temperature')
-						if(isTemperature && Number(symptoms[symptom]) < 370) return false;
-						const pain = isTemperature ? tempToPain(Number(symptoms[symptom])) : symptoms[symptom]?.toString() as painCalification;
+					sortSymptoms(keys)
+						.map(({type, value}) => {
+						const isTemperature = type.includes('temperature')
+						if(isTemperature && (value < 370 && value !== 0)) return false;
+						if(value === 0) {
+							return (
+								<View
+									key={type}
+									style={dayRecordStyle.symptomsListItem}
+								>
+									<CustomButton 
+										text={i18n.t('enterEveningTemperature')}
+										onPress={tempEdit}
+										containerStyle={{
+											width: '100%',
+											paddingLeft: 20,
+										}}
+										style={{
+											paddingVertical: 10,
+											backgroundColor: '#F5A623',
+											borderRadius: 2,
+											color: '#3B3B3B',
+											textTransform: 'uppercase',
+											fontSize: 11
+										}}
+									/>
+								</View>
+							)
+						}
+						const pain = isTemperature ? tempToPain(value) : value.toString() as painCalification;
 						return (
 							<View
-								key={symptom}
+								key={type}
 								style={dayRecordStyle.symptomsListItem}
 							>
 								<View
 									style={[dayRecordStyle.symptomsListCircle, { backgroundColor: typeColor[pain] }]}
 								/>
 								<View style={{ flexDirection: "row" }}>
-									<Text>{i18n.t(isTemperature ? symptom+'Short' : symptom)} </Text>
+									<Text>{i18n.t(isTemperature ? type+'Short' : type)} </Text>
 									<Text style={{ fontStyle: "italic" }}>
-										({ isTemperature ? formatTemp(Number(symptoms[symptom])) : i18n.t(typeLabel[pain])})
+										({ isTemperature ? formatTemp(value) : i18n.t(typeLabel[pain])})
                 					</Text>
 								</View>
 							</View>
