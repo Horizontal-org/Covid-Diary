@@ -40,8 +40,8 @@ const symptomsList = [
 const symptomsValues = [
   { type: 'none' , value: 1 },
   { type: 'mild' , value: 2 },
-  { type: 'severe' , value: 3 },
-  { type: 'extreme' , value: 4 }
+  { type: 'moderate' , value: 3 },
+  { type: 'severe' , value: 4 }
 ];
 
 export const WizardScreen = ({ navigation, route }: Props) => {
@@ -53,7 +53,7 @@ export const WizardScreen = ({ navigation, route }: Props) => {
 
   const setTitle = (date: Moment) => {
     navigation.setOptions({ 
-      title: isToday(date.toDate()) ? i18n.t('today') : date.format('dddd')
+      headerTitle: isToday(date.toDate()) ? i18n.t('today') : date.format('dddd')
     });
   }
 
@@ -61,6 +61,9 @@ export const WizardScreen = ({ navigation, route }: Props) => {
     if ( route.params.date ) {
       const date = moment(route.params.date)
       loadSymptoms(date);
+      if (route.params.screen) {
+        setScreen(symptomsList.indexOf(route.params.screen) || 0)
+      }
       return;
     }
     setLoading(false)
@@ -103,8 +106,8 @@ export const WizardScreen = ({ navigation, route }: Props) => {
   }
 
   const setSymptom = (symptom: SymptomsList) => {
-    if (symptom.temperatureEvening) { symptom.temperatureEvening = formatTemperature(symptom.temperatureEvening) }
-    if (symptom.temperatureMorning) { symptom.temperatureMorning = formatTemperature(symptom.temperatureMorning) }
+    if (symptom.temperatureEvening && symptom.temperatureEvening !== 0) { symptom.temperatureEvening = formatTemperature(symptom.temperatureEvening) }
+    if (symptom.temperatureMorning && symptom.temperatureMorning !== 0) { symptom.temperatureMorning = formatTemperature(symptom.temperatureMorning) }
     if (record) {
       setRecord({
         ...record,
@@ -144,14 +147,14 @@ export const WizardScreen = ({ navigation, route }: Props) => {
         const oldSym = oldRercords.find(old => old.type === symptom);
         if (oldSym) {
           if (oldSym.value === symptoms[symptom]) return;
-          oldSym.value = symptoms[symptom] || 1
+          oldSym.value = symptoms[symptom] as number
           return conn.manager.save(oldSym)
         }
         const sym = new Symptom();
         sym.date = record.date;
         sym.user = route.params.user;
         sym.type = symptom;
-        sym.value = symptoms[symptom] || 1;
+        sym.value = symptoms[symptom] as number;
         return conn.getRepository(Symptom).insert(sym)
       })
     );
@@ -197,10 +200,21 @@ export const WizardScreen = ({ navigation, route }: Props) => {
                               isFarenheit={!route.params.user.celsius}
                             />
                           </View>
-                          <CustomButton style={{backgroundColor: 'transparent', color: 'rgb(112, 193, 179)'}} onPress={()=>{
-                            deleteSymptom(symptomsList[screen]);
-                            nextScreen()
-                          }} text={i18n.t('skip')} />
+                          { 
+                            symptomsList[screen].includes('temperatureMorning') || getActualTemp()
+                              ? (
+                                <CustomButton style={{backgroundColor: 'transparent', color: 'rgb(112, 193, 179)'}} onPress={()=>{
+                                  deleteSymptom(symptomsList[screen]);
+                                  nextScreen()
+                                }} text={i18n.t('skip')} />
+                              )
+                              : (
+                                <CustomButton style={{backgroundColor: 'transparent', color: 'rgb(112, 193, 179)'}} onPress={()=>{
+                                  setSymptom({ [symptomsList[screen]] : 0 });
+                                  nextScreen()
+                                }} text={i18n.t('enterLater')} />
+                              )
+                          }
                         </>
                     )
                 }
@@ -319,20 +333,20 @@ const btnStyles = StyleSheet.create({
     color: 'rgb(50,50,50)'
   },
   mild: {
-    backgroundColor: 'rgb(242, 175, 41)',
-    borderColor: 'rgb(242, 175, 41)',
+    backgroundColor: '#F7CA45',
+    borderColor: '#F7CA45',
     borderWidth: 2,
     color: 'rgb(50,50,50)'
   },
-  severe: {
-    backgroundColor: 'rgb(248, 90, 62)',
-    borderColor: 'rgb(248, 90, 62)',
+  moderate: {
+    backgroundColor: '#E55934',
+    borderColor: '#E55934',
     borderWidth: 2,
     color: '#fff'
   },
-  extreme: {
-    backgroundColor: 'rgb(215, 38, 61)',
-    borderColor: 'rgb(215, 38, 61)',
+  severe: {
+    backgroundColor: '#9F1725',
+    borderColor: '#9F1725',
     borderWidth: 2,
     color: '#fff'
   },
