@@ -1,7 +1,7 @@
 import React, {useState, useEffect } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import ScrollPicker from 'react-native-picker-scrollview';
 
-import { ScrollView } from 'react-native-gesture-handler';
 import { CToFar, fToCel } from '../utils/temperature';
 
 type TempScrollProps = {
@@ -9,55 +9,82 @@ type TempScrollProps = {
     defaultValue?: number
     isFarenheit?: boolean
 }
-type ScrollInfo = {
-    timestamp: number;
-    value: number;
-}
-export const TempScroll = ({onChange, defaultValue, isFarenheit}:TempScrollProps) => {
-    const [ scroll, setScroll ] = useState<ScrollInfo | undefined>();
-    const [ temperature, setTemperature ] = useState(356);
 
-    const setFormatedTemperature = (temp: number) => {
-        if (isFarenheit) return setTemperature(CToFar(temp))
-        return setTemperature(temp)
+const dataTmpSource = (isFarenheit: boolean | undefined) => {
+    if(isFarenheit) return Array(120-92).fill(0).map((_,i) =>  92 + i);
+    return Array(55-35).fill(0).map((_,i)=> 35+i);
+}
+        
+const dateTmpDecimals = [0,1,2,3,4,5,6,7,8,9]
+
+export const TempScroll = ({onChange, defaultValue, isFarenheit}:TempScrollProps) => {
+    const [ decimal, setDecimal ] = useState(6)
+    const [ integer, setInteger ] = useState(35)
+
+    const setFormatedTemperature = (temp: number | undefined, convert: boolean | undefined) => {
+        temp = temp ? temp : 365;
+        if (convert) { temp = CToFar(temp); }
+        const newInteger = Math.floor(temp/10);
+        const newDecimal = Math.round(((temp/10) - newInteger) * 10)
+        setInteger(newInteger);
+        setDecimal(newDecimal === 10 ? 0 : newDecimal);
+    }
+
+    const onScroll = (newTemp: number) => {
+        setFormatedTemperature(newTemp, false);
+        onChange(newTemp);
     }
 
     useEffect(()=> {
-        if (defaultValue) {
-            setFormatedTemperature(defaultValue)
-        }
-    }, [])
+        setFormatedTemperature(defaultValue, isFarenheit)
+    }, [defaultValue])
 
     return (
-        <>
-            <ScrollView
-                onTouchStart={(e)=> { setScroll({ timestamp: e.timeStamp, value: e.nativeEvent.pageY })}}
-                onTouchEnd={(e)=>{
-                    if(!scroll) return;
-                    const velocity = (scroll.value - e.nativeEvent.pageY)/(e.timeStamp - scroll.timestamp)*2
-                    const newTemp = temperature + Math.round((scroll.value - e.nativeEvent.pageY)*Math.abs(velocity) / 100 )
-                    onChange( isFarenheit ? fToCel(newTemp) : newTemp );
-                    setTemperature(newTemp);
-                }}
-                pagingEnabled
-                >
-                <Text style={styles.temp}>{(temperature - 1) / 10}</Text>
-                <Text style={[styles.temp, styles.tempSelected]}>{temperature / 10}</Text>
-                <Text style={styles.temp}>{(temperature + 1) / 10}</Text>
-                </ScrollView>
-                <Text style={{flex: 2, textAlign: 'left', fontSize: 40}}>
-                {!isFarenheit ? '°C' : '°F'}
-                </Text>
-        </>
+        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems:'center', width: '100%', height: 210}}>
+            <View>
+                <ScrollPicker
+                    dataSource={dataTmpSource(isFarenheit)}
+                    selectedIndex={dataTmpSource(isFarenheit).indexOf(integer)}
+                    onValueChange={ (value:number) => onScroll((value * 10) + decimal) }
+                    renderItem={(data: number, index: number, isSelected: boolean) => {
+                        return(
+                                <Text style={[{textAlign: 'right' }, styles.temp, (isSelected? styles.tempSelected : {})]}>{data}</Text>
+                        )
+                    }}
+                    wrapperColor={'transparent'}
+                    highlightColor={'transparent'}
+                    itemHeight={70}
+                    wrapperHeight={210}
+                />
+            </View>
+            <Text style={{marginTop: 20, marginRight: 30, marginLeft: 20 ,fontSize: 30, textAlign: 'center'}}>.</Text>
+            <View>
+                <ScrollPicker
+                    dataSource={dateTmpDecimals}
+                    selectedIndex={decimal}
+                    onValueChange={ (value:number) => onScroll((integer * 10) + value) } 
+                    renderItem={(data: number, index: number, isSelected: boolean) => {
+                        return(
+                                <Text style={[{textAlign: 'left'},styles.temp, (isSelected? styles.tempSelected : {})]}>{data}</Text>
+                        )
+                    }}
+                    wrapperColor={'transparent'}
+                    highlightColor={'transparent'}
+                    itemHeight={70}
+                    wrapperHeight={210}
+                />
+            </View>
+            <Text style={{fontSize: 40, marginLeft: 40, flex: 1}}>{ isFarenheit ? 'F°': 'C°'}</Text>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     temp: {
-        fontSize: 70,
-        lineHeight: 75,
+        fontSize: 60,
         padding: 0,
-        fontWeight: '300',
+        textAlign: 'right', 
+        fontWeight: '100',
         opacity: 0.5,
         color: 'rgb(64, 72, 82)',
     },
