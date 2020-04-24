@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Covid Companion",
+    "name": "Covid Diary",
     "slug": "covid-companion",
     "platforms": [
       "ios",
@@ -8,13 +8,14 @@
     ],
     "android": {
       "package": "org.hzontal.covid",
-      "versionCode": 1
+      "versionCode": 3,
+      "permissions": []
     },
     "ios": {
       "bundleIdentifier": "org.hzontal.covid",
-      "buildNumber": "0.0.1"
+      "buildNumber": "0.0.3"
     },
-    "version": "0.0.1",
+    "version": "0.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
