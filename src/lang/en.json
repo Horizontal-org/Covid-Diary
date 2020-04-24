@@ -26,8 +26,8 @@
         "vomiting" : "Vomiting",
         "bodyAches" : "Body Aches",
         "diarrhea" : "Diarrhea",
-        "extreme": "Extreme",
         "severe": "Severe",
+        "moderate": "Moderate",
         "mild": "Mild",
         "today": "Today",
         "none": "None",
@@ -39,6 +39,12 @@
         "saveSymptoms": "Save Symptoms",
         "cancel": "Cancel",
         "edit": "Edit",
-        "editMessage": "You have already entered symptoms for this day. Do you want to edit your entry?"
+        "editMessage": "You have already entered symptoms for this day. Do you want to edit your entry?",
+        "editProfile": "Edit Profile",
+        "deleteProfile": "Delete Profile",
+        "deleteProfileMsg": "Are you sure you want to delete this profile? All symptom data will be lost.",
+        "delete": "Delete",
+        "enterLater": "Enter later",
+        "enterEveningTemperature": "Enter evening temperature"
     }
 }

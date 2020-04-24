@@ -26,9 +26,9 @@
         "vomiting" : "Vómitos",
         "bodyAches" : "Dolores corporales",
         "diarrhea" : "Diarrea",
-        "extreme": "extremo",
-        "severe": "severo",
-        "mild": "suave",
+        "severe": "Severo",
+        "moderate": "Moderado",
+        "mild": "Suave",
         "today": "Hoy",
         "enter-symptoms": "Ingresar Síntomas",
         "skip": "Pasar",
@@ -39,6 +39,12 @@
         "edit": "Editar",
         "none": "Ninguno",
         "previous": "Anterior",
-        "editMessage": "Ya has introducido los síntomas de este día. ¿Quieres editar tu entrada?"
+        "editMessage": "Ya has introducido los síntomas de este día. ¿Quieres editar tu entrada?",
+        "editProfile": "Editar Perfil",
+        "deleteProfile": "Borrar Perfil",
+        "deleteProfileMsg": "¿Estás seguro de que quieres borrar este perfil? Todos los datos de los síntomas se perderán.",
+        "delete": "Borrar",
+        "enterLater": "Ingresar luego",
+        "enterEveningTemperature": "Ingresar temperatura nocturna"
     }
 }
