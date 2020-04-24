@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
 import PlusIcon from "../assets/UI/Add.svg";
 
@@ -9,6 +9,7 @@ import { CustomButton } from "../components/Button";
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../services/navigation/routeTypes";
+import { useFocusEffect } from '@react-navigation/native';
 
 type HomeNavigationProps = StackNavigationProp<RootStackParamList, "Home">;
 type Props = {
@@ -21,7 +22,6 @@ export const HomeScreen = ({ navigation }: Props) => {
     const connection = await db;
     const users = await connection.getRepository(User).find({});
     setUsers(users);
-    console.log(users);
   };
 
   const goToCreate = () => {
@@ -42,15 +42,15 @@ export const HomeScreen = ({ navigation }: Props) => {
     };
   };
 
-  const deleteUser = (user: User) => async () => {
-    // // Only for debug
-    // const connection = await db;
-    // await connection.getRepository(User).remove(user);
-    // loadUsers();
+  const editUser = (user: User) => async () => {
+    navigation.navigate('ProfileAdd', { user })
   };
-
+ 
   useEffect(() => {
-    loadUsers();
+    navigation.addListener('focus', loadUsers);
+		return () => {
+			navigation.removeListener('focus', loadUsers)
+		}
   }, []);
 
   return userList ? (
@@ -80,7 +80,7 @@ export const HomeScreen = ({ navigation }: Props) => {
           <View style={{ width: "100%", padding: 30 }}>
             {userList.map((user) => (
               <CustomButton
-                onLongPress={deleteUser(user)}
+                onLongPress={editUser(user)}
                 key={user.id}
                 onPress={goToUser(user)}
                 text={user.name}
