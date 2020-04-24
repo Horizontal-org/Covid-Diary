@@ -1,11 +1,11 @@
-import { User } from '../../entities';
+import { User, symptomsTypes } from '../../entities';
 
 export type RootStackParamList = {
     Home: undefined;
     Welcome: undefined;
     About: undefined;
     Resources: undefined;
-    ProfileAdd: undefined;
+    ProfileAdd: { user?: User};
     Profile: { user: User };
-    Wizard: { user: User, date?: string, edit?: boolean }
+    Wizard: { user: User, date?: string, edit?: boolean, screen?: symptomsTypes }
 };
