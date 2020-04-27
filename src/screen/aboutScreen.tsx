@@ -1,14 +1,43 @@
 import React from 'react';
 import i18n from '../services/i18n';
-import { StyleSheet, View} from 'react-native';
+import { StyleSheet, View, Linking} from 'react-native';
 import { Text } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 export const AboutScreen = () => {
 
   return (
-    <View style={styles.container}>
-        <Text>About screen</Text>
+    <ScrollView style={styles.container}>
+        <GrayBox title={'About Covid Companion'}>
+          Covid Companion is developed by Horizontal, a technology non-profit.
+          Learn more about us at <Text style={styles.link} onPress={()=> Linking.openURL('https://hzontal.org')}>https://hzontal.org</Text> and send us feedback or questions at <Text style={styles.link} onPress={()=> Linking.openURL('mailto:contact@hzontal.org')} >contact@hzontal.org</Text>.
+        </GrayBox>
+
+        <GrayBox title={'Data Privacy'}>
+          All the data you enter in Covid Companion stays on your phone.
+          We can never access any of your data.
+          You can see our privacy policy at <Text style={styles.link} onPress={()=> Linking.openURL('https://hzontal.org/covid-privacy')}>https://hzontal.org/covid-privacy</Text>
+        </GrayBox>
+
+        <GrayBox title={'Open Source'}>
+        Covid Companion is open-source.
+        The code is publicly available at <Text style={styles.link} onPress={()=> Linking.openURL('https://github.com/Horizontal-org')}>https://github.com/Horizontal-org</Text>
+        </GrayBox>
+    </ScrollView>
+  );
+}
+
+type GrayBoxProps = {
+  title: string;
+}
+const GrayBox: React.FC<GrayBoxProps> = ({title, children}) => {
+  return (
+    <View style={styles.grayBox}>
+      <Text style={styles.title}>{title}</Text>
+        <Text style={styles.text}>
+          {children}
+        </Text>
     </View>
   );
 }
@@ -17,7 +46,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center'
+    marginTop: 80,
+    paddingHorizontal: 20,
   },
+  grayBox: {
+    width: '100%',
+    borderRadius: 30,
+    backgroundColor: '#ECECEC',
+    padding: 27,
+    marginBottom: 20,
+  },
+  title: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14,
+    letterSpacing: 1.14,
+    lineHeight: 24,
+    color: "#457B9D",
+    textTransform: 'uppercase',
+  },
+  text: {
+    fontSize: 14,
+    lineHeight: 24,
+    marginTop: 10
+  },
+  link: {
+    color: '#70C1B3'
+  }
 });
