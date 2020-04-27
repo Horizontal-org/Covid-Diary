@@ -35,6 +35,7 @@
         "saveThatsAll" : "Eso es todo!",
         "saveMessage": "Recuerde introducir sus síntomas diariamente para tener un mejor seguimiento de su condición.",
         "saveSymptoms": "Guardar Síntomas",
+        "save": "Guardar",
         "cancel": "Cancelar",
         "edit": "Editar",
         "none": "Ninguno",
@@ -45,6 +46,8 @@
         "deleteProfileMsg": "¿Estás seguro de que quieres borrar este perfil? Todos los datos de los síntomas se perderán.",
         "delete": "Borrar",
         "enterLater": "Ingresar luego",
-        "enterEveningTemperature": "Ingresar temperatura nocturna"
+        "enterEveningTemperature": "Ingresar temperatura nocturna",
+        "selectDateMessage":"¿Para qué fecha está introduciendo los síntomas?"
+
     }
 }

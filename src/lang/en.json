@@ -16,8 +16,8 @@
         "soreThroat" : "Sore Throat",
         "temperatureMorning" : "Body Temperature (Morning)",
         "temperatureEvening" : "Body Temperature (Evening)",
-        "temperatureMorningShort" : "Body Temp (Morning)",
-        "temperatureEveningShort" : "Body Temp (Evening)",
+        "temperatureMorningShort" : "Morning temperature",
+        "temperatureEveningShort" : "Evening temperature",
         "shortnessOfBreath" : "Shortness of Breath",
         "runnyNose" : "Runny nose",
         "lossOfSmell" : "Loss of smell/taste",
@@ -34,6 +34,7 @@
         "previous": "Previous",
         "enter-symptoms": "Enter Symptoms",
         "skip": "Skip",
+        "save": "Save",
         "saveThatsAll" : "That’s all for now!",
         "saveMessage": "Remember to enter your symptoms every day to best track your condition.",
         "saveSymptoms": "Save Symptoms",
@@ -45,6 +46,7 @@
         "deleteProfileMsg": "Are you sure you want to delete this profile? All symptom data will be lost.",
         "delete": "Delete",
         "enterLater": "Enter later",
-        "enterEveningTemperature": "Enter evening temperature"
+        "enterEveningTemperature": "Enter evening temperature",
+        "selectDateMessage":"What date are you entering symptoms for?"
     }
 }
