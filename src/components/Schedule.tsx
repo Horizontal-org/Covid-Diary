@@ -49,7 +49,7 @@ export const ScheduleScreen = ({ onSubmit, onChange, user }: Props) => {
     return (
         <View style={styles.container}>
              <Modal
-                isVisible={warning}
+                isVisible={!warning}
                 onBackButtonPress={()=>{ setWarning(false) }}
                 animationOut={'fadeOut'}
                 hideModalContentWhileAnimating={true}
@@ -59,16 +59,16 @@ export const ScheduleScreen = ({ onSubmit, onChange, user }: Props) => {
                 }}
                 >
                 <View style={{backgroundColor: '#fff', width: '90%', display: 'flex', alignItems: "center", borderRadius: 15, padding: 20}}>
-                    <Text style={styles.modalText}>
+                    <Text style={modalStyle.modalText}>
                         { i18n.t('editMessage') }
                     </Text>
-                    <View style={styles.modalFooter}>
-                        <CustomButton containerStyle={styles.modalButton} text={i18n.t('cancel')} onPress={() => setWarning(false)} />
-                        <CustomButton containerStyle={styles.modalButton} text={i18n.t('edit')} onPress={() => onSubmit(date)} />
+                    <View style={modalStyle.modalFooter}>
+                        <CustomButton containerStyle={modalStyle.modalBtn} style={[modalStyle.modalBtnText]}text={i18n.t('cancel')} onPress={() => setWarning(false)} />
+                        <CustomButton containerStyle={modalStyle.modalBtn} style={[modalStyle.modalBtnText, modalStyle.modalBtnTextConfirm]}text={i18n.t('edit')} onPress={() => onSubmit(date)} />
                     </View>
                 </View>
             </Modal>
-            <Text style={styles.title}>Which date are you entering symptoms for?</Text>
+            <Text style={styles.title}>{i18n.t('selectDateMessage')}</Text>
             <View style={styles.whiteContainer}>
                 <View style={styles.arrowContainer}>
                     <TouchableOpacity style={styles.arrowBtn} onPress={() => changeDate(moment(date).subtract(1, 'd'))}>
@@ -98,15 +98,12 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     title: {
+        fontFamily: 'OpenSans-SemiBold',
+        letterSpacing: 0.7,
         padding: 35,
         color: "#ffffff",
         fontSize: 24,
         textAlign: 'center'
-    },
-    headerTitle: {
-        color: '#1D3557',
-        opacity: 0.76
-
     },
     whiteContainer: {
         backgroundColor: '#ffffff',
@@ -130,17 +127,19 @@ const styles = StyleSheet.create({
     },
     dayTitle: {
         color: "#050505",
-        fontSize: 30,
-        fontWeight: '600',
+        fontSize: 28,
+        height: 45,
+        fontFamily: 'OpenSans-SemiBold',
         letterSpacing: 0.88,
         textAlign: 'center'
     },
     daySubTitle: {
         textTransform: 'uppercase',
         textAlign: 'center',
+        fontSize: 14,
         opacity: 0.66,
         letterSpacing: 1.19,
-        fontWeight: '600',
+        fontFamily: 'OpenSans-SemiBold',
         color: '#050505',
     
     },
@@ -148,21 +147,33 @@ const styles = StyleSheet.create({
         padding: 10,
         height:180,
         width: 180
-    },
+    },    
+});
+
+const modalStyle = StyleSheet.create({
     modalText: {
+        fontFamily: 'OpenSans-Regular',
         paddingHorizontal: 10,
         paddingVertical: 20,
         lineHeight: 24,
         fontSize: 15
     },
-    modalButton: {
+    modalBtn: {
         flex: 1,
-        padding:10
+        padding:10,
+    },
+    modalBtnText: {
+      backgroundColor: 'transparent',
+      color: "#6AB7AA"
+    },
+    modalBtnTextConfirm: {
+      backgroundColor: "#6AB7AA",
+      color: '#ffffff'
     },
     modalFooter: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    }
-    
-});
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    },
+  })
+  

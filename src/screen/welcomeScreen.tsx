@@ -62,16 +62,19 @@ const styles = StyleSheet.create({
     paddingRight: 20
   },
   title: {
-    color: '#3a769f',
-    fontWeight: 'bold',
+    color: '#457B9D',
+    fontFamily: 'OpenSans-Bold',
     fontSize: 50,
+    letterSpacing: 2.25,
     marginBottom: 5
   },
   text: {
     fontSize: 15,
-    fontWeight: '300',
+    fontFamily: 'OpenSans-Regular',
+    opacity: 0.76,
     textAlign: 'center',
-    lineHeight: 25
+    lineHeight: 24,
+    color: '#050505'
   },
   button: {
     width: '100%',
@@ -81,13 +84,17 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     padding: 10,
-    fontSize: 20,
-    fontWeight: 'bold'
+    fontSize: 18,
+    fontFamily: 'OpenSans-Bold',
+    color: '#1D3557',
+    opacity: 0.76
   },
   modalText: {
     marginTop: 10,
     lineHeight: 25,
     marginBottom: 20,
-    fontSize: 15
+    fontSize: 15,
+    color: '#050505',
+    opacity: 0.76
   }
 });

@@ -100,9 +100,10 @@ export const HomeScreen = ({ navigation }: Props) => {
               <PlusIcon width={30} height={30} />
               <Text
                 style={{
-                  fontWeight: "bold",
-                  color: "rgb(62, 121, 161)",
+                  fontFamily: 'OpenSans-Bold',
+                  color: "#457B9D",
                   textTransform: "uppercase",
+                  letterSpacing: 1.36,
                   marginLeft: 10,
                 }}
               >
@@ -160,9 +161,10 @@ const styles = StyleSheet.create({
   },
   buttonTabText: {
     backgroundColor: "rgba(255,255,255,0)",
-    color: "rgb(62, 121, 161)",
-    fontWeight: "300",
+    color: "#457B9D",
+    fontFamily: 'OpenSans-SemiBold',
     textTransform: "uppercase",
-    fontSize: 14,
+    fontSize: 16,
+    letterSpacing: 1.36
   },
 });

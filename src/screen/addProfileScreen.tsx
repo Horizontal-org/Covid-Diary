@@ -73,11 +73,11 @@ export const AddProfileScreen = ({ navigation, route }: Props) => {
           }}
           activeColor={'#A9A9A9'}
           fontSize={24}
-          fontWeight={'600'}
+          fontFamily={'OpenSans-Bold'}
           color={'#70C1B3'}
           labelActiveScale={0.7}
-          labelActiveTop={-30}
-          labelActiveColor={'#1D3557'}
+          labelActiveTop={-30}   
+          labelActiveColor={'rgb(82, 96, 128)'}
           underlineColor={'#A9A9A9'}
           error={ error ? i18n.t('name-error') : undefined}
         />
@@ -85,7 +85,7 @@ export const AddProfileScreen = ({ navigation, route }: Props) => {
           {i18n.t('record-my-temp')}
         </Text>
         <View style={{ display: "flex", flexDirection: 'row', justifyContent: 'center', alignContent: 'center'}}>
-          <Text style={{fontSize: 48, opacity: 0.66, color: isFarenheit? '#B4B4B4' : '#050505' }}>C°</Text>
+          <Text style={{fontSize: 30, fontFamily: 'OpenSans-SemiBold', opacity: 0.66, color: isFarenheit? '#B4B4B4' : '#050505' }}>C°</Text>
           <Switch
             trackColor={{ false: "#70C1B3", true: "#70C1B3" }}
             thumbColor={"#fff"}
@@ -94,7 +94,7 @@ export const AddProfileScreen = ({ navigation, route }: Props) => {
             value={isFarenheit}
             style={{marginLeft: 10, marginRight: 10}}
           />
-          <Text style={{fontSize: 48, opacity: 0.66, color: !isFarenheit? '#B4B4B4' : '#050505' }}>F°</Text>
+          <Text style={{fontSize: 30, fontFamily: 'OpenSans-SemiBold', opacity: 0.66, color: !isFarenheit? '#B4B4B4' : '#050505' }}>F°</Text>
         </View>
         { 
           isEditMode()
@@ -104,7 +104,7 @@ export const AddProfileScreen = ({ navigation, route }: Props) => {
       </ScrollView>
       <View style={styles.footer}>
         <CustomButton style={styles.buttonTabText} containerStyle={styles.buttonTab} onPress={() => navigation.goBack()} text={i18n.t('cancel')} />
-        <CustomButton style={styles.buttonTabText} containerStyle={styles.buttonTab} onPress={submit} text={i18n.t('save')} />
+        <CustomButton style={[styles.buttonTabText, styles.buttonTabSaveText]} containerStyle={styles.buttonTab} onPress={submit} text={i18n.t('save')} />
       </View>
       <Modal
         isVisible={deleteModal}
@@ -121,8 +121,8 @@ export const AddProfileScreen = ({ navigation, route }: Props) => {
                 { i18n.t('deleteProfileMsg') }
             </Text>
             <View style={modalStyle.modalFooter}>
-                <CustomButton containerStyle={modalStyle.modalButton} text={i18n.t('cancel')} onPress={() => showDeleteBox(false)} />
-                <CustomButton containerStyle={modalStyle.modalButton} text={i18n.t('delete')} onPress={confirmDelete} />
+                <CustomButton containerStyle={modalStyle.modalBtn} style={[modalStyle.modalBtnText]} text={i18n.t('cancel')} onPress={() => showDeleteBox(false)} />
+                <CustomButton containerStyle={modalStyle.modalBtn} style={[modalStyle.modalBtnText, modalStyle.modalBtnTextConfirm]} text={i18n.t('delete')} onPress={confirmDelete} />
             </View>
         </View>
     </Modal>
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   bodyTitles: {
     textAlign: 'left',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'OpenSans-Bold',
     color: '#1D3557',
     opacity: 0.76,
     width: '100%',
@@ -165,41 +165,61 @@ const styles = StyleSheet.create({
     justifyContent:'space-between'
   },
   buttonTab: {
-    width: 'auto',
+    width: "auto",
     paddingLeft: 30,
     paddingRight: 30,
-    marginBottom: 10,
+    marginBottom: 20,
   },
   buttonTabText: {
-    backgroundColor: 'rgba(255,255,255,0)',
-    color: '#050505',
+    backgroundColor: "rgba(255,255,255,0)",
+    color: "#050505",
+    fontFamily: 'OpenSans-Regular',
     opacity: 0.76,
-    fontWeight: '300',
-    textTransform: 'uppercase',
-    fontSize: 14
-  }
+    fontSize: 15,
+    letterSpacing: 0
+  },
+  buttonTabSaveText: {
+    backgroundColor:'#6AB7AA',
+    fontFamily: 'OpenSans-Bold',
+    color: '#ffffff',
+    paddingHorizontal: 48
+  },
 });
 
 const deleteBtnStyle = StyleSheet.create({
-  btn: {backgroundColor: '#D7263D'},
-  container: {width: '100%', marginTop: 30}
+  btn: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
+    letterSpacing: 0.57,
+    backgroundColor: '#D7263D'
+  },
+  container: {width: '100%', marginTop: 50}
 })
 
 
 const modalStyle = StyleSheet.create({
   modalText: {
+      fontFamily: 'OpenSans-Regular',
       paddingHorizontal: 10,
       paddingVertical: 20,
       lineHeight: 24,
       fontSize: 15
   },
-  modalButton: {
+  modalBtn: {
       flex: 1,
-      padding:10
+      padding:10,
+  },
+  modalBtnText: {
+    backgroundColor: 'transparent',
+    color: "#6AB7AA"
+  },
+  modalBtnTextConfirm: {
+    backgroundColor: "#6AB7AA",
+    color: '#ffffff'
   },
   modalFooter: {
-      width: '100%',
-      flexDirection: 'row',
-      justifyContent: 'space-between'
-  }
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
 })

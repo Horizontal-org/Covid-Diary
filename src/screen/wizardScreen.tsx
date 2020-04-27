@@ -163,8 +163,8 @@ export const WizardScreen = ({ navigation, route }: Props) => {
 
   const isUnselected = (symptBtn: {type: string, value: number}) => {
     const acutalSymptom = symptomsList[screen];
-    if (!record || !record.symptoms) return false;
-    if (!record.symptoms[acutalSymptom]) return false;
+    if (!record || !record.symptoms) return undefined;
+    if (!record.symptoms[acutalSymptom]) return undefined;
     if (record.symptoms[acutalSymptom] !== symptBtn.value) return true;
     return false
   }
@@ -186,7 +186,7 @@ export const WizardScreen = ({ navigation, route }: Props) => {
                 { 
                   !symptomsList[screen].includes('temperature')
                     ? symptomsValues.map(symptBtn => (
-                        <CustomButton key={symptBtn.value} containerStyle={[styles.button]}  style={[btnStyles[symptBtn.type], isUnselected(symptBtn) ? btnStyles.unselected : {}]} text={i18n.t(symptBtn.type)} onPress={()=> {
+                        <CustomButton key={symptBtn.value} containerStyle={[styles.button]}  style={[btnStyles[symptBtn.type], isUnselected(symptBtn) === undefined ? {} : isUnselected(symptBtn) ? btnStyles.unselected : btnStyles.selected]} text={i18n.t(symptBtn.type)} onPress={()=> {
                           setSymptom({ [symptomsList[screen]]: symptBtn.value })
                         }} />
                       )
@@ -203,13 +203,13 @@ export const WizardScreen = ({ navigation, route }: Props) => {
                           { 
                             symptomsList[screen].includes('temperatureMorning') || getActualTemp()
                               ? (
-                                <CustomButton style={{backgroundColor: 'transparent', color: 'rgb(112, 193, 179)'}} onPress={()=>{
+                                <CustomButton style={btnStyles.tmpBtn} onPress={()=>{
                                   deleteSymptom(symptomsList[screen]);
                                   nextScreen()
                                 }} text={i18n.t('skip')} />
                               )
                               : (
-                                <CustomButton style={{backgroundColor: 'transparent', color: 'rgb(112, 193, 179)'}} onPress={()=>{
+                                <CustomButton style={btnStyles.tmpBtn} onPress={()=>{
                                   setSymptom({ [symptomsList[screen]] : 0 });
                                   nextScreen()
                                 }} text={i18n.t('enterLater')} />
@@ -288,14 +288,14 @@ const styles = StyleSheet.create({
     
   },
   text: {
-    color: 'rgb(64, 72, 82)',
+    color: '#404852',
     fontSize: 30,
-    fontWeight: '700',
+    fontFamily: 'OpenSans-Bold',
     letterSpacing: 0.36,
-    marginBottom: 20,
+    marginBottom: 30,
   },
   button: {
-    width: '100%', marginBottom: 10
+    width: '100%', marginBottom: 16
   },
   modalButton: {
     width: 180
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     padding: 10,
     fontSize: 20,
-    fontWeight: 'bold'
+    fontFamily: 'OpenSans-SemiBold'
   },
   modalText: {
     marginTop: 10,
@@ -328,30 +328,40 @@ const styles = StyleSheet.create({
 const btnStyles = StyleSheet.create({
   none: {
     borderColor: 'rgb(150,150,150)',
-    borderWidth: 2,
+    borderWidth: 3,
     backgroundColor: 'transparent',
     color: 'rgb(50,50,50)'
   },
   mild: {
     backgroundColor: '#F7CA45',
     borderColor: '#F7CA45',
-    borderWidth: 2,
+    borderWidth: 3,
     color: 'rgb(50,50,50)'
   },
   moderate: {
     backgroundColor: '#E55934',
     borderColor: '#E55934',
-    borderWidth: 2,
+    borderWidth: 3,
     color: '#fff'
   },
   severe: {
     backgroundColor: '#9F1725',
     borderColor: '#9F1725',
-    borderWidth: 2,
+    borderWidth: 3,
     color: '#fff'
   },
   unselected: {
     opacity: 0.4
+  },
+  selected: {
+    borderColor: '#404852'
+  },
+  tmpBtn:{
+    backgroundColor: 'transparent',
+    color: '#70C1B3',
+    letterSpacing: 0.7,
+    fontSize: 24,
+    fontFamily: 'OpenSans-SemiBold'
   }
 })
 
@@ -359,7 +369,8 @@ const saveStyle = StyleSheet.create({
   title: {
     color: "#70C1B3",
     fontSize: 24,
-    fontWeight: '600',
+    letterSpacing: 0.7,
+    fontFamily: 'OpenSans-SemiBold',
     textAlign: 'center'
   },
   subTitle: {
@@ -367,6 +378,7 @@ const saveStyle = StyleSheet.create({
     width:220,
     textAlign: 'center',
     fontSize: 15,
+    fontFamily: 'OpenSans-Regular',
     lineHeight: 24,
     color: '#050505',
     opacity: 0.76

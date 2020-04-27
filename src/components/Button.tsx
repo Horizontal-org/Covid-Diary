@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         padding: 15,
         width: '100%',
         color: '#ffffff',
-        fontWeight: 'bold',
+        fontFamily: 'OpenSans-SemiBold',
         fontSize: 18,
     }
 });

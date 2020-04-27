@@ -57,7 +57,7 @@ export const TempScroll = ({onChange, defaultValue, isFarenheit}:TempScrollProps
                     wrapperHeight={210}
                 />
             </View>
-            <Text style={{marginTop: 20, marginRight: 30, marginLeft: 20 ,fontSize: 30, textAlign: 'center'}}>.</Text>
+            <Text style={{marginTop: 20, marginRight: 20, marginLeft: 20 ,fontSize: 30, textAlign: 'center'}}>.</Text>
             <View>
                 <ScrollPicker
                     dataSource={dateTmpDecimals}
@@ -74,7 +74,7 @@ export const TempScroll = ({onChange, defaultValue, isFarenheit}:TempScrollProps
                     wrapperHeight={210}
                 />
             </View>
-            <Text style={{fontSize: 40, marginLeft: 40, flex: 1}}>{ isFarenheit ? 'F°': 'C°'}</Text>
+            <Text style={{fontSize: 40, fontFamily: 'OpenSans-Light', marginLeft: 40, flex: 1}}>{ isFarenheit ? '°F': '°C'}</Text>
         </View>
     );
 };
@@ -84,8 +84,9 @@ const styles = StyleSheet.create({
         fontSize: 60,
         padding: 0,
         textAlign: 'right', 
-        fontWeight: '100',
-        opacity: 0.5,
+        fontFamily: 'OpenSans-Light',
+        letterSpacing: 3.85,
+        opacity: 0.3,
         color: 'rgb(64, 72, 82)',
     },
         tempSelected: {

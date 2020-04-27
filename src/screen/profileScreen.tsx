@@ -86,7 +86,7 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 		navigation.setOptions({
 			headerTitle: () => (
 				<View style={{flexDirection: 'row', alignItems: 'center'}}>
-					<Text style={{lineHeight: 24, fontWeight: '700', color: '#1D3557', opacity: 0.76, fontSize: 18}}>{route.params.user.name}</Text>
+					<Text style={{lineHeight: 24, fontFamily: 'OpenSans-Bold', color: '#1D3557', opacity: 0.76, fontSize: 18}}>{route.params.user.name}</Text>
 					<TouchableOpacity style={{ marginLeft: 10 }} onPress={editUser}>
 						<EditIcon width={20} height={20} />
 					</TouchableOpacity>
@@ -169,7 +169,7 @@ const DailyRecord = ({ celsius, record, onEdit, tempEdit }: DailyRecordProps) =>
 							: dayRecordStyle.symptomsBoxEmpyt
 					}
 				>
-					{symptoms ? <SymptomsBox tempEdit={() => tempEdit(record)} symptoms={symptoms} celsius={celsius} /> : false}
+					{symptoms ? <SymptomsBox isToday={isToday(date)} tempEdit={() => tempEdit(record)} symptoms={symptoms} celsius={celsius} /> : false}
 				</View>
 			</View>
 		</View>
@@ -180,8 +180,9 @@ type SymptomsBoxProps = {
 	symptoms: SymptomsList;
 	celsius: boolean;
 	tempEdit: () => void;
+	isToday: boolean
 };
-const SymptomsBox = ({ symptoms, celsius, tempEdit }: SymptomsBoxProps) => {
+const SymptomsBox = ({ symptoms, celsius, tempEdit, isToday }: SymptomsBoxProps) => {
 	const keys = Object.keys(symptoms) as symptomsTypes[];
 
 	const tempToPain = (temp: number) => {
@@ -211,7 +212,7 @@ const SymptomsBox = ({ symptoms, celsius, tempEdit }: SymptomsBoxProps) => {
 						.map(({type, value}) => {
 						const isTemperature = type.includes('temperature')
 						if(isTemperature && (value < 370 && value !== 0)) return false;
-						if(value === 0) {
+						if(value === 0 && isToday) {
 							return (
 								<View
 									key={type}
@@ -222,15 +223,17 @@ const SymptomsBox = ({ symptoms, celsius, tempEdit }: SymptomsBoxProps) => {
 										onPress={tempEdit}
 										containerStyle={{
 											width: '100%',
+											marginTop: 10,
 											paddingLeft: 20,
 										}}
 										style={{
-											paddingVertical: 10,
+											paddingVertical: 7,
 											backgroundColor: '#F5A623',
 											borderRadius: 2,
 											color: '#3B3B3B',
 											textTransform: 'uppercase',
-											fontSize: 11
+											fontFamily: 'OpenSans-SemiBold',
+											fontSize: 10
 										}}
 									/>
 								</View>
@@ -246,10 +249,10 @@ const SymptomsBox = ({ symptoms, celsius, tempEdit }: SymptomsBoxProps) => {
 									style={[dayRecordStyle.symptomsListCircle, { backgroundColor: typeColor[pain] }]}
 								/>
 								<View style={{ flexDirection: "row" }}>
-									<Text>{i18n.t(isTemperature ? type+'Short' : type)} </Text>
-									<Text style={{ fontStyle: "italic" }}>
-										({ isTemperature ? formatTemp(value) : i18n.t(typeLabel[pain])})
-                					</Text>
+									{ isTemperature
+										?<Text style={dayRecordStyle.pain}>{i18n.t(type+'Short')}: {formatTemp(value)}</Text>
+										:<Text style={dayRecordStyle.pain}>{i18n.t(type)}: {i18n.t(typeLabel[pain])} </Text>
+									}
 								</View>
 							</View>
 						);
@@ -273,24 +276,27 @@ const dayRecordStyle = StyleSheet.create({
 		width: "100%",
 	},
 	blueBox: {
-		width: 20,
-		height: 20,
-		borderRadius: 6,
-		backgroundColor: "rgb(69, 123, 157)",
+		width: 16,
+		height: 16,
+		borderRadius: 5,
+		backgroundColor: "#457B9D",
 		marginRight: 10,
 	},
 	date: {
-		color: "rgba(5, 5, 5,0.66)",
-		fontSize: 15,
+		fontFamily: 'OpenSans-SemiBold',
+		color: "#050505",
+		opacity: 0.66,
+		letterSpacing: 1.02,
+		fontSize: 12,
 		textTransform: "uppercase",
 		flex: 1,
 	},
 	records: {
 		display: "flex",
 		flexDirection: "row",
-		borderLeftColor: "rgb(169, 169, 169)",
+		borderLeftColor: "#A9A9A9",
 		borderLeftWidth: 1,
-		marginLeft: 10,
+		marginLeft: 7,
 	},
 	symptomsBox: {
 		marginLeft: 20,
@@ -309,7 +315,7 @@ const dayRecordStyle = StyleSheet.create({
 	},
 	symptomsListItem: {
 		flexDirection: "row",
-		marginVertical: 5,
+		marginVertical: 3,
 		alignItems: "center",
 	},
 	symptomsListCircle: {
@@ -318,4 +324,11 @@ const dayRecordStyle = StyleSheet.create({
 		height: 12,
 		borderRadius: 12
 	},
+	pain: {
+		fontFamily: 'OpenSans-Regular',
+		lineHeight: 19,
+		fontSize: 12,
+		color: '#050505',
+		opacity: 0.76
+	}
 });
