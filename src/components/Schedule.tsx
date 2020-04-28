@@ -49,7 +49,7 @@ export const ScheduleScreen = ({ onSubmit, onChange, user }: Props) => {
     return (
         <View style={styles.container}>
              <Modal
-                isVisible={!warning}
+                isVisible={warning}
                 onBackButtonPress={()=>{ setWarning(false) }}
                 animationOut={'fadeOut'}
                 hideModalContentWhileAnimating={true}
