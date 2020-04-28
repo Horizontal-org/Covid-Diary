@@ -47,7 +47,11 @@
         "delete": "Borrar",
         "enterLater": "Ingresar luego",
         "enterEveningTemperature": "Ingresar temperatura nocturna",
-        "selectDateMessage":"¿Para qué fecha está introduciendo los síntomas?"
-
+        "selectDateMessage":"¿Para qué fecha está introduciendo los síntomas?",
+        "emptySymptomsList" : "Aún no ha ingresado ningún síntoma. Haz clic en el botón de abajo para empezar.",
+        "getStarted": "Comenzar",
+        "welcomePleaseNote": "Atención:",
+        "welcomePleaseNoteMsg": "Esta NO es una aplicación de auto-examen para determinar si tienes COVID-19.",
+        "feelingHealthy": "Sintiéndose saludable"
     }
 }

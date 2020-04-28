@@ -47,6 +47,11 @@
         "delete": "Delete",
         "enterLater": "Enter later",
         "enterEveningTemperature": "Enter evening temperature",
-        "selectDateMessage":"What date are you entering symptoms for?"
+        "selectDateMessage":"What date are you entering symptoms for?",
+        "emptySymptomsList" : "You haven't entered any symptoms yet. Click on the button below to get started.",
+        "getStarted": "Get Started",
+        "welcomePleaseNote": "Please note:",
+        "welcomePleaseNoteMsg": "This is NOT a self-screening app to determine whether you have COVID-19.",
+        "feelingHealthy": "Feeling healthy"
     }
 }
