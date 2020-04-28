@@ -1,5 +1,6 @@
 import { Symptom, symptomsTypes } from '../entities';
 import moment from 'moment';
+import { isToday } from './isToday';
 
 export type SymptomsList = {
     cough?: number;
@@ -20,26 +21,31 @@ export type DayRecord = {
     date: Date;
     symptoms?: SymptomsList;
     id?: number;
+    healthy?: boolean;
 };
+const isHealtier = (act: Symptom, date?: Date) => act.value === 1 || (!isToday(date || act.date) && act.value === 0);
 
 export const mergeSymptoms = (prev: DayRecord[], act: Symptom): DayRecord[] => {
   let day = prev.find(({ date }) => moment(date).isSame(act.date));
   const type = act.type as symptomsTypes;
+
   if (!day) {
     const newDate: DayRecord = {
       id: act.id ? act.id : Date.now(),
       date: act.date,
+      healthy: act.value === 1 || isHealtier(act),
       symptoms: {
-        [type]: act.value,
+        ...(act.value !== 1 ? {[type]: act.value}: {})
       },
     };
     return [...prev, newDate];
   }
   return prev.map((dayRecord) => {
     if (dayRecord.date !== act.date) return dayRecord;
+    dayRecord.healthy = !dayRecord.healthy? false : isHealtier(act, dayRecord.date),
     dayRecord.symptoms = {
       ...dayRecord.symptoms,
-      [type]: act.value,
+      ...(act.value !== 1 ? {[type]: act.value}: {})
     };
     return dayRecord;
   });
@@ -51,8 +57,7 @@ const addEmptyDays = (prev: DayRecord[], act: DayRecord, index: number, original
     moment(original[index + 1].date)
       .subtract(1, "days")
       .isSame(act.date)
-  )
-    return [...prev, act];
+  ) return [...prev, act];
   const daysUntilNextRecord = moment(act.date).diff(
     original[index + 1].date,
     "days"
