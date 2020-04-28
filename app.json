@@ -8,14 +8,14 @@
     ],
     "android": {
       "package": "org.hzontal.covid",
-      "versionCode": 3,
+      "versionCode": 5,
       "permissions": []
     },
     "ios": {
       "bundleIdentifier": "org.hzontal.covid",
-      "buildNumber": "0.0.3"
+      "buildNumber": "0.0.5"
     },
-    "version": "0.0.3",
+    "version": "0.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
