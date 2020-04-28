@@ -83,7 +83,7 @@ export const ScheduleScreen = ({ onSubmit, onChange, user }: Props) => {
                     </TouchableOpacity>
                 </View>
                 <Image source={require('../assets/calendar-image.png')} style={styles.calendarImg} />
-                <CustomButton text={'Get Started'} onPress={submitDate} style={{paddingHorizontal: 80}} containerStyle={{paddingBottom: 40}}/>
+                <CustomButton text={i18n.t('getStarted')} onPress={submitDate} style={{paddingHorizontal: 80}} containerStyle={{paddingBottom: 40}}/>
             </View>
         </View>
     );
@@ -160,7 +160,7 @@ const modalStyle = StyleSheet.create({
     },
     modalBtn: {
         flex: 1,
-        padding:10,
+        padding:5,
     },
     modalBtnText: {
       backgroundColor: 'transparent',

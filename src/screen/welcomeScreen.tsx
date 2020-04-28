@@ -35,9 +35,9 @@ export const WelcomeScreen = ({ navigation }: Props) => {
           <View style={{backgroundColor: '#fff', width: '90%', display: 'flex', alignItems: "center", borderRadius: 15, padding: 20}}>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
               <WargingIcon width={20} height={20} />
-              <Text style={styles.modalTitle}>Please note:</Text>
+              <Text style={styles.modalTitle}>{i18n.t('welcomePleaseNote')}</Text>
             </View>
-            <Text style={styles.modalText}>This is NOT a self-screening app to determine whether you have COVID-19.</Text>
+            <Text style={styles.modalText}>{i18n.t('welcomePleaseNoteMsg')}</Text>
             <CustomButton containerStyle={styles.modalButton} text={i18n.t('ok')} onPress={navigateToHome} />
           </View>
         </Modal>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#457B9D',
     fontFamily: 'OpenSans-Bold',
-    fontSize: 50,
+    fontSize: 40,
     letterSpacing: 2.25,
     marginBottom: 5
   },
