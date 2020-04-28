@@ -3,7 +3,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../services/navigation/routeTypes";
 import { RouteProp } from "@react-navigation/native";
 
-import { Text, View, StyleSheet, FlatList } from "react-native";
+import { Text, View, StyleSheet, FlatList, ActivityIndicator, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CustomButton } from "../components/Button";
 import CalendarIcon from "../assets/UI/Table.svg";
@@ -44,8 +44,10 @@ type Props = {
 
 export const ProfileScreen = ({ navigation, route }: Props) => {
 	const [symptoms, setSymptoms] = useState<DayRecord[]>([]);
+	const [ isLoading, setLoading ] = useState(true);
 	
 	const loadUserSymptoms = async () => {
+		setLoading(true);
 		console.log('loading user symptom')
 		const connection = await db;
 		const userSymptoms = await connection.getRepository(Symptom).find({
@@ -55,9 +57,10 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 		
 		setSymptoms(
 			formatSymptoms(
-				userSymptoms.filter(removeNull)
+				userSymptoms
 			)
 		);
+		setLoading(false);
 	};
 
 	const goToWizard = (record?: DayRecord, temp?: boolean) => {
@@ -99,26 +102,43 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 		}
 	}, []);
 
-	return (
-		<View style={{ width: "100%", flex: 1 }}>
-			<View style={styles.container}>
-				<FlatList
-					style={{paddingHorizontal: 30}}
-					inverted={true}
-					data={symptoms}
-					renderItem={({item}) => (
-						<DailyRecord record={item} tempEdit={ r => goToWizard(r,true)} onEdit={goToWizard} celsius={route.params.user.celsius} />
-					)}
-					keyExtractor={item => String(item.id ? item.id : item.date)}
-				/>
-			</View>
-			<CustomButton
-				containerStyle={{ width: "100%", padding: 20 }}
-				text={i18n.t("enter-symptoms")}
-				onPress={goToWizard}
-			/>
-		</View>
-	);
+	return isLoading
+		? <ActivityIndicator style={{flex: 1}}/>
+		: 
+			symptoms.length > 0 
+				? (
+					<View style={{ width: "100%", flex: 1 }}>
+						<View style={styles.container}>
+							<FlatList
+								style={{paddingHorizontal: 30}}
+								inverted={true}
+								data={symptoms}
+								renderItem={({item}) => (
+									<DailyRecord record={item} tempEdit={ r => goToWizard(r,true)} onEdit={goToWizard} celsius={route.params.user.celsius} />
+								)}
+								keyExtractor={item => String(item.id ? item.id : item.date)}
+							/>
+						</View>
+						<CustomButton
+							containerStyle={{ width: "100%", padding: 20 }}
+							text={i18n.t("enter-symptoms")}
+							onPress={goToWizard}
+						/>
+					</View>
+				)
+				: (
+					<View style={styles.emptyBox}>
+						<Text style={styles.text}>
+							{ i18n.t('emptySymptomsList')}
+						</Text>
+						<Image source={require('../assets/diary-image.png')} style={styles.image} />
+						<CustomButton
+							containerStyle={{ width: "100%", padding: 20 }}
+							text={i18n.t("enter-symptoms")}
+							onPress={goToWizard}
+						/>
+					</View>
+				)
 };
 
 const styles = StyleSheet.create({
@@ -127,6 +147,28 @@ const styles = StyleSheet.create({
 		width: "100%",
 		flex: 1,
 	},
+	emptyBox: {
+		marginTop: 80,
+		justifyContent: 'center',
+		alignItems: 'center',
+		paddingHorizontal: 20,
+		width: "100%",
+		flex: 1,
+	},
+	text: {
+		fontFamily: 'OpenSans-Regular',
+		lineHeight: 24,
+		fontSize: 15,
+		color: '#050505',
+		opacity: 0.76,
+		textAlign: 'center',
+		paddingVertical: 10,
+	 },
+	 image: {
+		 width: 250,
+		 height: 250,
+		 maxWidth: '80%'
+	 }
 });
 
 type DailyRecordProps = {
@@ -137,7 +179,7 @@ type DailyRecordProps = {
 };
 
 const DailyRecord = ({ celsius, record, onEdit, tempEdit }: DailyRecordProps) => {
-	const { date, symptoms } = record;
+	const { date, symptoms, healthy } = record;
 	return (
 		<View
 			style={[
@@ -169,7 +211,7 @@ const DailyRecord = ({ celsius, record, onEdit, tempEdit }: DailyRecordProps) =>
 							: dayRecordStyle.symptomsBoxEmpyt
 					}
 				>
-					{symptoms ? <SymptomsBox isToday={isToday(date)} tempEdit={() => tempEdit(record)} symptoms={symptoms} celsius={celsius} /> : false}
+					{symptoms ? <SymptomsBox healthy={healthy} isToday={isToday(date)} tempEdit={() => tempEdit(record)} symptoms={symptoms} celsius={celsius} /> : false}
 				</View>
 			</View>
 		</View>
@@ -180,9 +222,10 @@ type SymptomsBoxProps = {
 	symptoms: SymptomsList;
 	celsius: boolean;
 	tempEdit: () => void;
-	isToday: boolean
+	healthy?: boolean;
+	isToday: boolean;
 };
-const SymptomsBox = ({ symptoms, celsius, tempEdit, isToday }: SymptomsBoxProps) => {
+const SymptomsBox = ({ symptoms, celsius, tempEdit, isToday, healthy }: SymptomsBoxProps) => {
 	const keys = Object.keys(symptoms) as symptomsTypes[];
 
 	const tempToPain = (temp: number) => {
@@ -205,15 +248,17 @@ const SymptomsBox = ({ symptoms, celsius, tempEdit, isToday }: SymptomsBoxProps)
 
 	return (
 		<View>
-			{keys.length === 0 ? (
-				<Text style={{ textAlign: "center" }}>No symptoms</Text>
+			{ healthy ? (
+				<Text style={[dayRecordStyle.pain ,{ textAlign: "center" }]}>
+					{i18n.t('feelingHealthy')}
+				</Text>
 			) : (
 					sortSymptoms(keys)
 						.map(({type, value}) => {
 						const isTemperature = type.includes('temperature')
 						if(isTemperature && (value < 370 && value !== 0)) return false;
-						if(value === 0 && isToday) {
-							return (
+						if(value === 0) {
+							return isToday ? (
 								<View
 									key={type}
 									style={dayRecordStyle.symptomsListItem}
@@ -237,7 +282,7 @@ const SymptomsBox = ({ symptoms, celsius, tempEdit, isToday }: SymptomsBoxProps)
 										}}
 									/>
 								</View>
-							)
+							): false
 						}
 						const pain = isTemperature ? tempToPain(value) : value.toString() as painCalification;
 						return (
