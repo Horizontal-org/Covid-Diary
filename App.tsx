@@ -75,7 +75,7 @@ export default function App() {
 
   return !isI18nInitialized || !isFontLoaded
     ? (
-      <ActivityIndicator />
+      <ActivityIndicator style={{flex: 1, width: '100%'}} />
     )
     : (
       <NavigationContainer>
