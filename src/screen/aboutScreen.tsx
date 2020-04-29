@@ -11,18 +11,18 @@ export const AboutScreen = () => {
     <ScrollView style={styles.container}>
         <GrayBox title={'About Covid Companion'}>
           Covid Companion is developed by Horizontal, a technology non-profit.
-          Learn more about us at <Text style={styles.link} onPress={()=> Linking.openURL('https://hzontal.org')}>https://hzontal.org</Text> and send us feedback or questions at <Text style={styles.link} onPress={()=> Linking.openURL('mailto:contact@hzontal.org')} >contact@hzontal.org</Text>.
+          Learn more about us at <Text style={styles.link} onPress={()=> Linking.openURL('https://wearehorizontal.org')}>wearehorizontal.org</Text> and send us feedback or questions at <Text style={styles.link} onPress={()=> Linking.openURL('mailto:diary@wearehorizontal.org')} >diary@wearehorizontal.org</Text>.
         </GrayBox>
 
         <GrayBox title={'Data Privacy'}>
           All the data you enter in Covid Companion stays on your phone.
           We can never access any of your data.
-          You can see our privacy policy at <Text style={styles.link} onPress={()=> Linking.openURL('https://hzontal.org/covid-privacy')}>https://hzontal.org/covid-privacy</Text>
+          You can see our privacy policy at <Text style={styles.link} onPress={()=> Linking.openURL('https://wearehorizontal.org/diary/privacy')}>https://wearehorizontal.org/diary/privacy</Text>
         </GrayBox>
 
         <GrayBox title={'Open Source'}>
         Covid Companion is open-source.
-        The code is publicly available at <Text style={styles.link} onPress={()=> Linking.openURL('https://github.com/Horizontal-org')}>https://github.com/Horizontal-org</Text>
+        The code is publicly available at <Text style={styles.link} onPress={()=> Linking.openURL('https://github.com/horizontal-org/covid-diary')}>https://github.com/horizontal-org/covid-diary</Text>
         </GrayBox>
     </ScrollView>
   );
