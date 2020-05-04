@@ -6,6 +6,8 @@ import { CustomButton } from '../components/Button';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../services/navigation/routeTypes';
 import WargingIcon from '../assets/UI/Warning.svg';
+import { Configuration } from '../entities';
+import { getConnection } from 'typeorm/browser';
 
 type WelcomeNavigationProps = StackNavigationProp<RootStackParamList, 'Welcome'>;
 type Props = {
@@ -15,7 +17,12 @@ type Props = {
 export const WelcomeScreen = ({ navigation }: Props) => {
   const [modalVisible, setModalVisible] = useState(false);
   
-  const navigateToHome = () => {
+  const navigateToHome = async () => {
+    const connection = await getConnection()
+    const repo = await connection.getRepository(Configuration);
+    const defaultConfig = new Configuration();
+    defaultConfig.showFirstScreen = false;
+    await repo.insert(defaultConfig);
     setModalVisible(false);
     navigation.replace('Home');
   }

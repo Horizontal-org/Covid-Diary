@@ -7,8 +7,8 @@ import { Updates } from 'expo';
 import { I18nManager as RNI18nManager, ActivityIndicator, Image, View, Text } from 'react-native';
 import { useFonts } from '@use-expo/font';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
+import { NavigationContainer, RouteProp } from '@react-navigation/native';
+import { createStackNavigator, StackNavigationOptions, StackNavigationProp } from '@react-navigation/stack';
 
 import i18n from './src/services/i18n';
 import { HomeScreen } from './src/screen/homeScreen';
@@ -19,13 +19,17 @@ import { AddProfileScreen } from './src/screen/addProfileScreen';
 import { ProfileScreen } from './src/screen/profileScreen';
 import { RootStackParamList } from './src/services/navigation/routeTypes';
 import { WizardScreen } from './src/screen/wizardScreen';
+import { Configuration } from './src/entities';
+import { db } from './src/services/orm';
+import CloseIcon from './src/assets/UI/Arrows/Back/Black.svg';
 
 const headerCustomStyle = (title: string | (() => React.ReactNode)): StackNavigationOptions => ({
   headerTitle: typeof title === 'string' ? () => <Text style={titleStyle.title}>{title}</Text> : title,
   headerShown: true,
   headerTitleAlign:'center',
   headerTintColor: 'rgba(29, 53, 87,0.76)',
-  headerTransparent: true
+  headerTransparent: true,
+  headerBackImage: () => <CloseIcon width={18} height={18} style={{margin: 5}}/>,
 });
 
 const titleStyle = StyleSheet.create({
@@ -56,7 +60,21 @@ export default function App() {
 
   });
   const [ isI18nInitialized, setI18nInitialized ] = useState(false);
+  const [ firstScreen, setFirstScreen ] = useState<'Welcome' | 'Home' | undefined>(undefined);
 
+  const startDb = async () => {
+    const connection = await db;
+    const repo = await connection.getRepository(Configuration)
+    const configuration = await repo.findOne();
+    if (configuration) {
+      setFirstScreen(configuration.showFirstScreen ? 'Welcome': 'Home')
+      configuration.showFirstScreen = false;
+      await repo.save(configuration)
+      return
+    }
+    setFirstScreen('Welcome');  
+    return;
+  }
   useEffect(() => {
     i18n.init()
       .then(async () => {
@@ -69,17 +87,19 @@ export default function App() {
             return;
         }
         setI18nInitialized(true);
+        
     })
     .catch((error) => console.warn(error));
+    startDb();
   }, []);
 
-  return !isI18nInitialized || !isFontLoaded
+  return !isI18nInitialized || !isFontLoaded || !firstScreen
     ? (
       <ActivityIndicator style={{flex: 1, width: '100%'}} />
     )
     : (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={'Welcome'}>
+        <Stack.Navigator initialRouteName={firstScreen}>
           <Stack.Screen name={'Welcome'} component={WelcomeScreen} options={{headerShown: false}} />
           <Stack.Screen name={'Home'} component={HomeScreen} options={headerCustomStyle(brandHeader)} />
           <Stack.Screen name={'About'} component={AboutScreen} options={headerCustomStyle(i18n.t('about'))} />

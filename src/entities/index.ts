@@ -51,3 +51,12 @@ export class Symptom {
     user?: User;
 
 }
+
+@Entity("Configuration")
+export class Configuration {
+    @PrimaryGeneratedColumn({ name: 'id', type: 'integer'})
+    id?: number;
+    
+    @Column({ name: 'showFirstScreen', type: 'boolean', default: true })
+    showFirstScreen!: boolean;
+}
