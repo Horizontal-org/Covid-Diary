@@ -9,15 +9,22 @@ import { CustomButton } from "../components/Button";
 import CalendarIcon from "../assets/UI/Table.svg";
 import EditIcon from "../assets/UI/Edit.svg";
 
+
 import i18n from "../services/i18n";
 import { db } from "../services/orm";
 import { symptomsTypes, Symptom } from "../entities";
 
 import moment from "moment";
 
-import { formatSymptoms, DayRecord, SymptomsList, removeNull } from '../utils/formatSymptoms';
+import { formatSymptoms, DayRecord, SymptomsList, symptomsList } from '../utils/formatSymptoms';
 import { isToday } from '../utils/isToday';
 import { CToFar } from '../utils/temperature';
+
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+
+import { Base64 } from '../utils/base64';
+import Papa from 'papaparse';
 
 const hasSymptoms = (dayRecord: DayRecord) => dayRecord.symptoms ? true : false;
 
@@ -36,6 +43,18 @@ const typeLabel = {
 type painCalification = "severe" | "moderate" | "mild";
 type ProfileScreenNavigationProps = StackNavigationProp<RootStackParamList, "Profile">;
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, "Profile">;
+
+const tempToPain = (temp: number) => {
+	if (temp < 370) return '1';
+	if (temp < 375) return '2';
+	if (temp < 385) return '3';
+	return '4';
+}
+
+const formatTemp = (temp: number, celsius: boolean) => {
+	if (celsius) return temp/10 + ' °C';
+	return (CToFar(temp)/10).toFixed(1) + ' °F';
+}
 
 type Props = {
 	navigation: ProfileScreenNavigationProps;
@@ -64,6 +83,7 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 	};
 
 	const goToWizard = (record?: DayRecord, temp?: boolean) => {
+		setLoading(true)
 		if (!record || !record.date) {
 			navigation.navigate("Wizard", { user: route.params.user });
 		} else {
@@ -78,14 +98,38 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 		navigation.navigate("ProfileAdd", { user: route.params.user })
 	}
 
+	const exportCSV = async () => {
+		const jsonData = symptoms.map(dRecord => ([
+			moment(dRecord.date).format('YYYY-MM-DD'),
+			...symptomsList.reduce((prev: string[], act) => {
+				return [
+					...prev,
+					dRecord.symptoms && dRecord.symptoms[act]
+						? act.includes('temperature')
+							? formatTemp(dRecord.symptoms[act], route.params.user.celsius)
+							: i18n.t(typeLabel[dRecord.symptoms[act]])
+						: i18n.t('none') || 'none'
+				]
+			},[])
+		]));
+
+		const headers = [
+			i18n.t('date'),
+			...symptomsList.map(sym => i18n.t(sym))
+		];
+		const csvData = await Papa.unparse([headers, ...jsonData]);
+
+		const data = Base64.btoa(csvData)
+		const path = (FileSystem.documentDirectory || '') + route.params.user.name + '-' + moment().format('YYYY-MM-DD') + '-covid-data.csv';
+		await FileSystem.writeAsStringAsync(path, data, {
+			encoding: FileSystem.EncodingType.Base64
+		})
+		Sharing.shareAsync(path,{dialogTitle: i18n.t('shareCSVfile')})
+
+	}
+
 	useEffect(() => {
-		/* navigation.setOptions({
-			headerRight: () => (
-				<TouchableOpacity style={{ marginRight: 10 }}>
-					<CalendarIcon width={30} height={30} />
-				</TouchableOpacity>
-			),
-		}); */
+
 		navigation.setOptions({
 			headerTitle: () => (
 				<View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -94,7 +138,12 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 						<EditIcon width={20} height={20} />
 					</TouchableOpacity>
 				</View>
-			)
+			),
+			headerRight: () => (
+				<TouchableOpacity style={{ marginRight: 10 }} onPress={exportCSV}>
+					<CalendarIcon width={30} height={30} />
+				</TouchableOpacity>
+			),
 		})
 		navigation.addListener('focus', loadUserSymptoms);
 		return () => {
@@ -110,7 +159,7 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 					<View style={{ width: "100%", flex: 1 }}>
 						<View style={styles.container}>
 							<FlatList
-								style={{paddingHorizontal: 30}}
+								style={{paddingHorizontal: 15}}
 								inverted={true}
 								data={symptoms}
 								renderItem={({item}) => (
@@ -143,7 +192,7 @@ export const ProfileScreen = ({ navigation, route }: Props) => {
 
 const styles = StyleSheet.create({
 	container: {
-		marginTop: 100,
+		marginTop: 70,
 		width: "100%",
 		flex: 1,
 	},
@@ -228,18 +277,6 @@ type SymptomsBoxProps = {
 const SymptomsBox = ({ symptoms, celsius, tempEdit, isToday, healthy }: SymptomsBoxProps) => {
 	const keys = Object.keys(symptoms) as symptomsTypes[];
 
-	const tempToPain = (temp: number) => {
-		if (temp < 370) return '1';
-		if (temp < 375) return '2';
-		if (temp < 385) return '3';
-		return '4';
-	}
-
-	const formatTemp = (temp: number) => {
-		if (celsius) return temp/10 + ' °C';
-		return (CToFar(temp)/10).toFixed(1) + ' °F';
-	}
-
 	const sortSymptoms = (symptomList: symptomsTypes[]) => {
 		return symptomList
 			.map(symptom => ({type: symptom, value: symptoms[symptom] as number}))
@@ -268,7 +305,7 @@ const SymptomsBox = ({ symptoms, celsius, tempEdit, isToday, healthy }: Symptoms
 										onPress={tempEdit}
 										containerStyle={{
 											width: '100%',
-											marginTop: 10,
+											marginVertical: 5,
 											paddingLeft: 20,
 										}}
 										style={{
@@ -295,7 +332,7 @@ const SymptomsBox = ({ symptoms, celsius, tempEdit, isToday, healthy }: Symptoms
 								/>
 								<View style={{ flexDirection: "row" }}>
 									{ isTemperature
-										?<Text style={dayRecordStyle.pain}>{i18n.t(type+'Short')}: {formatTemp(value)}</Text>
+										?<Text style={dayRecordStyle.pain}>{i18n.t(type+'Short')}: {formatTemp(value, celsius)}</Text>
 										:<Text style={dayRecordStyle.pain}>{i18n.t(type)}: {i18n.t(typeLabel[pain])} </Text>
 									}
 								</View>
@@ -345,8 +382,9 @@ const dayRecordStyle = StyleSheet.create({
 	},
 	symptomsBox: {
 		marginLeft: 20,
-		marginVertical: 20,
-		padding: 20,
+		marginVertical: 10,
+		paddingHorizontal: 10,
+		paddingVertical: 5,
 		backgroundColor: "rgb(236, 236, 236)",
 		borderRadius: 10,
 		flex: 1,
