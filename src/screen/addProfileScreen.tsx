@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import i18n from '../services/i18n';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import Reinput from 'reinput';
 import { CustomButton } from '../components/Button';
 import { Switch, ScrollView } from 'react-native-gesture-handler';
@@ -62,8 +62,8 @@ export const AddProfileScreen = ({ navigation, route }: Props) => {
   const isEditMode = () => route.params && route.params.user ? true : false
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.body} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+    <KeyboardAvoidingView style={styles.container}  behavior={Platform.OS == "ios" ? "padding" : "height"}>
+      <ScrollView style={styles.body} contentContainerStyle={{alignContent: 'center', justifyContent: 'center'}}>
         <Reinput
           label={i18n.t('name')}
           value={name}
@@ -84,7 +84,7 @@ export const AddProfileScreen = ({ navigation, route }: Props) => {
         <Text style={styles.bodyTitles}>
           {i18n.t('record-my-temp')}
         </Text>
-        <View style={{ display: "flex", flexDirection: 'row', justifyContent: 'center', alignContent: 'center'}}>
+        <View style={{ display: "flex", flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize: 30, fontFamily: 'OpenSans-SemiBold', opacity: 0.66, color: isFarenheit? '#B4B4B4' : '#050505' }}>C°</Text>
           <Switch
             trackColor={{ false: "#70C1B3", true: "#70C1B3" }}
@@ -92,7 +92,7 @@ export const AddProfileScreen = ({ navigation, route }: Props) => {
             ios_backgroundColor="#70C1B3"
             onValueChange={toggleSwitch}
             value={isFarenheit}
-            style={{marginLeft: 10, marginRight: 10}}
+            style={{marginHorizontal: 10}}
           />
           <Text style={{fontSize: 30, fontFamily: 'OpenSans-SemiBold', opacity: 0.66, color: !isFarenheit? '#B4B4B4' : '#050505' }}>F°</Text>
         </View>
@@ -126,17 +126,17 @@ export const AddProfileScreen = ({ navigation, route }: Props) => {
             </View>
         </View>
     </Modal>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop:100,
     flex: 1,
     width: '100%',
-    alignItems: 'center',
+    alignContent: 'center',
     justifyContent: 'center',
-    paddingTop: 100
   },
   header: {
     fontWeight: '800',
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   },
   body: {
     width: '100%',
-    padding: 34,
+    paddingHorizontal: 34,
   },
   bodyTitles: {
     textAlign: 'left',
@@ -165,10 +165,8 @@ const styles = StyleSheet.create({
     justifyContent:'space-between'
   },
   buttonTab: {
-    width: "auto",
-    paddingLeft: 30,
-    paddingRight: 30,
-    marginBottom: 20,
+    paddingHorizontal: 30,
+    marginVertical: 20,
   },
   buttonTabText: {
     backgroundColor: "rgba(255,255,255,0)",

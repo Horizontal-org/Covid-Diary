@@ -2,6 +2,22 @@ import { Symptom, symptomsTypes } from '../entities';
 import moment from 'moment';
 import { isToday } from './isToday';
 
+export const symptomsList = [
+  'cough',
+  'soreThroat',
+  'shortnessOfBreath',
+  'runnyNose',
+  'lossOfSmell',
+  'headache',
+  'abdominalPain',
+  'vomiting',
+  'bodyAches',
+  'diarrhea',
+  'temperatureMorning',
+  'temperatureEvening'
+];
+
+
 export type SymptomsList = {
     cough?: number;
     soreThroat?: number;

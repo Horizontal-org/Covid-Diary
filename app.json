@@ -12,8 +12,9 @@
       "permissions": []
     },
     "ios": {
-      "bundleIdentifier": "org.hzontal.covid",
-      "buildNumber": "0.0.5"
+      "bundleIdentifier": "org.hzontal.covid-diary",
+      "buildNumber": "0.0.5",
+      "icon": "./assets/icon-ios.png"
     },
     "version": "0.0.5",
     "orientation": "portrait",

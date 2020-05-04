@@ -34,12 +34,13 @@ export const CustomButton =  (props: CustomButtonProps) => {
 
 const styles = StyleSheet.create({
     buttonContainer: {
-
+        
     },
     buttonText: {
         textAlign: 'center',
         backgroundColor: 'rgb(78, 200, 180)',
-        borderRadius: 50,
+        borderRadius: 25 ,
+        overflow: 'hidden',
         padding: 15,
         width: '100%',
         color: '#ffffff',
