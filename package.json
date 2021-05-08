@@ -40,7 +40,7 @@
     "reinput": "^3.7.1",
     "styled-components": "^5.1.0",
     "tslib": "^1.11.1",
-    "typeorm": "^0.2.24"
+    "typeorm": "^0.2.25"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
